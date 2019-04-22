@@ -10,24 +10,22 @@ package src;
  * @author kannie
  */
 public class TerminalNode extends ParseTreeNode {
-    private String variableName = null;
     
+    // Symbol
     public TerminalNode(int name) {
         super();
-        this.setName(name);
+        this.setSymbol(name);
     }
     
-    public TerminalNode(Integer value) {
+    // Number and Boolean
+    public TerminalNode(Object value) {
         super();
         this.setValue(value);
     }
     
-    public TerminalNode(Double value) {
-        super();
-        this.setValue(value);
-    }
+    // Variable
     public TerminalNode(String name) {
         super();
-        this.variableName = name;
+        this.setVariableName(name);
     }
 }

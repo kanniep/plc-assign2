@@ -16,8 +16,9 @@ public abstract class ParseTreeNode {
     public static Hashtable varTable = new Hashtable();
 
     protected LinkedList<ParseTreeNode> nodeList;
-    private Object value;
-    private int name;
+    protected Object value;
+    private int symbol;
+    private String variableName = null;
 
     public ParseTreeNode() {
         nodeList = new LinkedList<>();
@@ -32,60 +33,48 @@ public abstract class ParseTreeNode {
         this.value = value;
     }
 
-    public int getName() {
-        return name;
+    public int getSymbol() {
+        return symbol;
     }
 
-    public void setName(int name) {
-        this.name = name;
+    public void setSymbol(int symbol) {
+        this.symbol = symbol;
+    }
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+    
+    public void inheritFrom(ParseTreeNode node) {
+        this.symbol = node.getSymbol();
+        this.value = node.getValue();
+        this.variableName = node.getVariableName();
     }
 
     public void addNode(ParseTreeNode newNode) {
         nodeList.add(newNode);
     }
     
-    private static boolean hasDouble(Number value1, Number value2) {
-        boolean hasDouble = value1 instanceof Double;
-        hasDouble = value2 instanceof Double;
-        return hasDouble;
-    }
-    
-    private void assignValue(double dResult, boolean hasDouble) {
-        if (!hasDouble) this.value = new Integer((int)dResult);
-        else this.value =  new Double(dResult); 
-    }
-    
-    public void add() {
-        Number value1 = (Number) this.nodeList.get(0).getValue();
-        Number value2 = (Number) this.nodeList.get(2).getValue();
-        double dResult = value1.doubleValue() + value2.doubleValue();
-        assignValue(dResult, hasDouble(value1, value2));
-    }
-    
-    public void minus() {
-        Number value1 = (Number) this.nodeList.get(0).getValue();
-        Number value2 = (Number) this.nodeList.get(2).getValue();
-        double dResult = value1.doubleValue() - value2.doubleValue();
-        assignValue(dResult, hasDouble(value1, value2));
-    }
-    
-    public void times() {
-        Number value1 = (Number) this.nodeList.get(0).getValue();
-        Number value2 = (Number) this.nodeList.get(2).getValue();
-        double dResult = value1.doubleValue() * value2.doubleValue();
-        assignValue(dResult, hasDouble(value1, value2));
-    }
-    
-    public void divide() {
-        Number value1 = (Number) this.nodeList.get(0).getValue();
-        Number value2 = (Number) this.nodeList.get(2).getValue();
-        double dResult = value1.doubleValue() / value2.doubleValue();
-        assignValue(dResult, hasDouble(value1, value2));
+    public ParseTreeNode getChild(int index) {
+        return this.nodeList.get(index);
     }
     
     public void run() {
-        this.nodeList.stream().forEach(node -> {
+        this.nodeList.stream().forEachOrdered(node -> {
            node.run();
         });
+    }
+    
+    protected static boolean hasDouble(Number value1, Number value2) {
+        return (value1 instanceof Double) || (value2 instanceof Double);
+    }
+    
+    protected void assignNumberValue(double dResult, boolean hasDouble) {
+        if (!hasDouble) this.value = (int)dResult;
+        else this.value =  dResult; 
     }
 }

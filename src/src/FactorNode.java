@@ -14,4 +14,10 @@ public class FactorNode extends ParseTreeNode {
         super();
         this.addNode(node);
     }
+    
+    @Override
+    public void run() {
+        super.run();
+        this.inheritFrom(this.getChild(0));
+    }
 }

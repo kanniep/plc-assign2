@@ -69,10 +69,22 @@ id = [:jletter:] [:jletterdigit:]*
 "-"                { System.out.print(" - "); return symbol(sym.MINUS); }
 "*"                { System.out.print(" * "); return symbol(sym.TIMES); }
 "/"                { System.out.print(" / "); return symbol(sym.DIVIDE); }
-":="               { System.out.print(" := "); return symbol(sym.ASSIGN); }
+"="               { System.out.print(" = "); return symbol(sym.ASSIGN); }
 "("               { System.out.print(" ( "); return symbol(sym.LPAREN); }
 ")"               { System.out.print(" ) "); return symbol(sym.RPAREN); }
 ";"               { System.out.print(" ) "); return symbol(sym.SEMI); }
+
+"if"               { System.out.print(" if "); return symbol(sym.IF); }
+"else"               { System.out.print(" else "); return symbol(sym.ELSE); }
+"{"               { System.out.print(" { "); return symbol(sym.LBRACKET); }
+"}"               { System.out.print(" } "); return symbol(sym.RBRACKET); }
+
+"<"               { System.out.print(" < "); return symbol(sym.LT); }
+"<="               { System.out.print(" <= "); return symbol(sym.LE); }
+"=="               { System.out.print(" == "); return symbol(sym.EQ); }
+"<>"               { System.out.print(" <> "); return symbol(sym.NE); }
+">"               { System.out.print(" > "); return symbol(sym.GT); }
+">="               { System.out.print(" >= "); return symbol(sym.GE); }
 
 {int}              { System.out.print(" " + yytext() + " ");
                      return symbol(sym.NUMBER, new Integer(yytext())); }

@@ -6,22 +6,20 @@ import java.util.*;
 import java.io.*;
 import java_cup.runtime.*;
 
-
-action code {:
-  Hashtable table = new Hashtable();
-:}
-
 /* ------------Grammar symbol declarations----------- */
 
-terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN, SEMI, NEWLINE;
+terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
+terminal                LT, LE, EQ, NE, GT, GE;
+terminal                IF, ELSE, LBRACKET, RBRACKET, SEMI, NEWLINE;
 terminal Integer        NUMBER;
 terminal Double         REAL;
 terminal String         ID;
 
-non terminal ParseTreeNode    StatementList;
-non terminal ParseTreeNode    Statement, Expression;
-non terminal ParseTreeNode    Term;
-non terminal ParseTreeNode    Factor;
+non terminal StatementNode      StatementList;
+non terminal StatementNode      Statement;
+non terminal ExpressionNode     Expression;
+non terminal TermNode           Term;
+non terminal FactorNode         Factor;
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -30,33 +28,27 @@ precedence left TIMES;
 /* ------------Grammar rules----------- */
 
 
-StatementList   ::=                             {:  RESULT = new ParseTreeNode(); :}
-                | StatementList:sl Statement:s  {:  sl.addNode(s);
-                                                    RESULT = sl;
-                                                :};
+StatementList   ::=                             {:  RESULT = new StatementNode(); :}
+                | StatementList:sl Statement:s  {:  RESULT = new StatementNode(sl, s); :};
 
-Statement   ::= ID:id ASSIGN Expression:e SEMI  {:  table.put(id, e.getValue());
-                                                    RESULT = new ParseTreeNode(id, e);
-                                                :}
-                | Expression:e SEMI             {:  RESULT = new ParseTreeNode(e, ParseTreeNode.Type.Statement); :}
+Statement   ::= ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+                | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
+                | IF LPAREN Expression:e RPAREN LBRACKET Statement:s RBRACKET
+                                                {:  RESULT = new StatementNode(e, s); :}
+                | IF LPAREN Expression:e RPAREN LBRACKET Statement:s1 RBRACKET ELSE RPAREN LBRACKET Statement:s2 RBRACKET
+                                                {:  RESULT = new StatementNode(e, s1, s2); :}
                 | NEWLINE;
 
-/* ----------Infix Notation---------- */
-Expression  ::= Expression:e PLUS Term:t        {:  RESULT = new ParseTreeNode(e, ParseTreeNode.Operation.Add, t, ParseTreeNode.Type.Expression); :}
-                | Expression:e MINUS Term:t     {:  RESULT = new ParseTreeNode(e, ParseTreeNode.Operation.Minus, t, ParseTreeNode.Type.Expression); :}
-                | Term:t                        {:  RESULT = new ParseTreeNode(t, ParseTreeNode.Type.Expression); :};
+Expression  ::= Expression:e PLUS Term:t        {:  RESULT = new ExpressionNode(sym.PLUS, e, t); :}
+                | Expression:e MINUS Term:t     {:  RESULT = new ExpressionNode(sym.MINUS, e, t); :}
+                | Term:t                        {:  RESULT = new ExpressionNode(t); :};
 
-Term        ::= Term:t TIMES Factor:f           {:  RESULT = new ParseTreeNode(t, ParseTreeNode.Operation.Times, f, ParseTreeNode.Type.Expression); :}
-                | Term:t DIVIDE Factor:f        {:  RESULT = new ParseTreeNode(t, ParseTreeNode.Operation.Divide, f, ParseTreeNode.Type.Expression); :}
-                | Factor:f                      {:  RESULT = new ParseTreeNode(f, ParseTreeNode.Type.Term); :};
+Term        ::= Term:t TIMES Factor:f           {:  RESULT = new TermNode(sym.TIMES, t, f); :}
+                | Term:t DIVIDE Factor:f        {:  RESULT = new TermNode(sym.DIVIDE, t, f); :}
+                | Factor:f                      {:  RESULT = new TermNode(f); :};
 
 
-Factor      ::= NUMBER:num                      {:  RESULT = new ParseTreeNode(num); :}
-                | REAL:real                     {:  RESULT = new ParseTreeNode(real); :}
-                | ID:id                         {:  Number value = (Number) table.get(id);
-                                                    if (value == null) {
-                                                        throw new IllegalStateException("Undeclared Identifier " + id);
-                                                    }
-                                                    RESULT = new ParseTreeNode(id, value);
-                                                :}
-                | LPAREN Expression:e RPAREN    {:  RESULT = new ParseTreeNode(e, ParseTreeNode.Type.Factor); :};
+Factor      ::= NUMBER:num                      {:  RESULT = new FactorNode(new TerminalNode(num)); :}
+                | REAL:real                     {:  RESULT = new FactorNode(new TerminalNode(real)); :}
+                | ID:id                         {:  RESULT = new FactorNode(new TerminalNode(id)); :}
+                | LPAREN Expression:e RPAREN    {:  RESULT = new FactorNode(e); :};

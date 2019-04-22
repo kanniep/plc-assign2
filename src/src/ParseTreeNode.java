@@ -5,135 +5,39 @@
  */
 package src;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 /**
  *
  * @author kannie
  */
-public class ParseTreeNode {
+public abstract class ParseTreeNode {
+    public static Hashtable varTable = new Hashtable();
 
-    private LinkedList<ParseTreeNode> nodeList;
-    private Number value;
-    private String name;
-    private Type nodeType = Type.StatementList;
-    private Operation nodeOperation = Operation.None;
-
-    public static enum Type {
-
-        StatementList,
-        Statement,
-        Expression,
-        Term,
-        Factor,
-        Final
-    }
-    
-    public static enum Operation {
-        None,
-        Add,
-        Minus,
-        Times,
-        Divide
-    }
+    protected LinkedList<ParseTreeNode> nodeList;
+    private Object value;
+    private int name;
 
     public ParseTreeNode() {
         nodeList = new LinkedList<>();
         value = null;
-        name = null;
-    }
-    
-    // Number --> Factor
-    public ParseTreeNode(Number value) {
-        this();
-        this.value = value;
-        this.nodeType = Type.Factor;
-    }
-    
-    // Number
-    public ParseTreeNode(Number value, Type nodeType) {
-        this();
-        this.value = value;
-        this.nodeType = nodeType;
     }
 
-    // Symbol --> Final
-    public ParseTreeNode(Operation oper) {
-        this();
-        this.nodeOperation = oper;
-        this.nodeType = Type.Final;
-    }
-    
-    // ID --> Factor
-    public ParseTreeNode(String name, Number value) {
-        this();
-        this.name = name;
-        this.value = value;
-        this.nodeType = Type.Factor;
-    }
-    
-    // Assign variable from variable
-    public ParseTreeNode(String name, ParseTreeNode node) {
-        this();
-        this.addNode(node);
-        this.name = name;
-        this.value = node.getValue();
-        this.nodeType = Type.Statement;
-    }
-    
-    // General inheritate
-    public ParseTreeNode(ParseTreeNode node1, Operation oper, ParseTreeNode node2, Type nodeType) {
-        this();
-        this.addNode(node1);
-        this.addNode(new ParseTreeNode(oper));
-        this.addNode(node2);        
-        this.nodeType = nodeType;
-        if (oper == Operation.Add) {
-            this.add(node1, node2);
-        } else if (oper == Operation.Minus) {
-            this.minus(node1, node2);
-        } else if (oper == Operation.Times) {
-            this.times(node1, node2);
-        } else if (oper == Operation.Divide) {
-            this.divide(node1, node2);
-        }
-    }
-
-    // General inheritate
-    public ParseTreeNode(ParseTreeNode node, Type nodeType) {
-        this();
-        this.addNode(node);
-        this.value = node.getValue();
-        this.name = node.getName();
-        this.nodeType = nodeType;
-    }
-
-    public Number getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public Integer intValue() {
-        return (Integer) value;
-    }
-
-    public void setValue(Number value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
-    public String getName() {
+    public int getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(int name) {
         this.name = name;
-    }
-    
-    public Type getNodeType() {
-        return nodeType;
-    }
-
-    public void setNodeType(Type nodeType) {
-        this.nodeType = nodeType;
     }
 
     public void addNode(ParseTreeNode newNode) {
@@ -151,31 +55,37 @@ public class ParseTreeNode {
         else this.value =  new Double(dResult); 
     }
     
-    public void add(ParseTreeNode node1, ParseTreeNode node2) {
-        Number value1 = node1.getValue();
-        Number value2 = node2.getValue();
+    public void add() {
+        Number value1 = (Number) this.nodeList.get(0).getValue();
+        Number value2 = (Number) this.nodeList.get(2).getValue();
         double dResult = value1.doubleValue() + value2.doubleValue();
         assignValue(dResult, hasDouble(value1, value2));
     }
     
-    public void minus(ParseTreeNode node1, ParseTreeNode node2) {
-        Number value1 = node1.getValue();
-        Number value2 = node2.getValue();
+    public void minus() {
+        Number value1 = (Number) this.nodeList.get(0).getValue();
+        Number value2 = (Number) this.nodeList.get(2).getValue();
         double dResult = value1.doubleValue() - value2.doubleValue();
         assignValue(dResult, hasDouble(value1, value2));
     }
     
-    public void times(ParseTreeNode node1, ParseTreeNode node2) {
-        Number value1 = node1.getValue();
-        Number value2 = node2.getValue();
+    public void times() {
+        Number value1 = (Number) this.nodeList.get(0).getValue();
+        Number value2 = (Number) this.nodeList.get(2).getValue();
         double dResult = value1.doubleValue() * value2.doubleValue();
         assignValue(dResult, hasDouble(value1, value2));
     }
     
-    public void divide(ParseTreeNode node1, ParseTreeNode node2) {
-        Number value1 = node1.getValue();
-        Number value2 = node2.getValue();
+    public void divide() {
+        Number value1 = (Number) this.nodeList.get(0).getValue();
+        Number value2 = (Number) this.nodeList.get(2).getValue();
         double dResult = value1.doubleValue() / value2.doubleValue();
         assignValue(dResult, hasDouble(value1, value2));
+    }
+    
+    public void run() {
+        this.nodeList.stream().forEach(node -> {
+           node.run();
+        });
     }
 }

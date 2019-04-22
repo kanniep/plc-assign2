@@ -72,7 +72,7 @@ id = [:jletter:] [:jletterdigit:]*
 "="               { System.out.print(" = "); return symbol(sym.ASSIGN); }
 "("               { System.out.print(" ( "); return symbol(sym.LPAREN); }
 ")"               { System.out.print(" ) "); return symbol(sym.RPAREN); }
-";"               { System.out.print(" ) "); return symbol(sym.SEMI); }
+";"               { System.out.print(" ; "); return symbol(sym.SEMI); }
 
 "if"               { System.out.print(" if "); return symbol(sym.IF); }
 "else"               { System.out.print(" else "); return symbol(sym.ELSE); }

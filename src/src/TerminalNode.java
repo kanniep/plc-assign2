@@ -28,4 +28,11 @@ public class TerminalNode extends ParseTreeNode {
         super();
         this.setVariableName(name);
     }
+    
+    @Override
+    public void run() {
+        // Run only when call variable.
+        if (this.getVariableName() != null)
+            this.setValue(ParseTreeNode.varTable.get(this.getVariableName()));
+    }
 }

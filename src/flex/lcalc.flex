@@ -49,10 +49,10 @@ import java_cup.runtime.*;
 
 /* Macro Declarations */
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
-newline = \r|\n|\r\n
+/* newline = \r|\n|\r\n */
 
 /* White space is a line terminator, space, tab, or line feed. */
-WhiteSpace     = [ \t\f]
+WhiteSpace = [\ \n\r\t\f]
 
 digit = [0-9]
 
@@ -86,6 +86,8 @@ id = [:jletter:] [:jletterdigit:]*
 ">"               { System.out.print(" > "); return symbol(sym.GT); }
 ">="               { System.out.print(" >= "); return symbol(sym.GE); }
 
+"print"               { System.out.print(" print "); return symbol(sym.PRINT); }
+
 {int}              { System.out.print(" " + yytext() + " ");
                      return symbol(sym.NUMBER, new Integer(yytext())); }
 {real}              { System.out.print(" " + yytext() + " ");
@@ -93,9 +95,6 @@ id = [:jletter:] [:jletterdigit:]*
 
 {id}               { System.out.print(" " + yytext() + " ");
                      return symbol(sym.ID, yytext()); }
-
-{newline}          { System.out.print(yytext());
-                    return symbol(sym.NEWLINE); }
 
 {WhiteSpace} { /* just skip what was found, do nothing */ }
 

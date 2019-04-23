@@ -11,17 +11,19 @@ package src;
  */
 public class StatementNode extends ParseTreeNode {
 
-    private enum StatementType {
+    public enum StatementType {
         Root,
         List,
         Expression,
         Assign,
         If,
-        IfElse
+        IfElse,
+        Print
     }
 
     private StatementType type = StatementType.Root;
-    private static final int expIndex = 2, state1Index = 5, state2Index = 9, varNameInd = 0;
+    private static final int expIndex = 2, assignExpIndex = 1, state1Index = 5,
+                             state2Index = 9;
 
     // Root node
     public StatementNode() {
@@ -50,7 +52,7 @@ public class StatementNode extends ParseTreeNode {
     public StatementNode(String name, ExpressionNode node) {
         super();
         type = StatementType.Assign;
-        this.addNode(new TerminalNode(name));
+        this.setVariableName(name);
         this.addNode(new TerminalNode(sym.ASSIGN));
         this.addNode(node);
     }
@@ -66,6 +68,13 @@ public class StatementNode extends ParseTreeNode {
         this.addNode(new TerminalNode(sym.LBRACKET));
         this.addNode(sNode);
         this.addNode(new TerminalNode(sym.RBRACKET));
+    }
+    
+    // Print statement
+    public StatementNode(StatementType type, ExpressionNode node) {
+        super();
+        this.type = type;
+        this.addNode(node);
     }
 
     // If else
@@ -89,14 +98,14 @@ public class StatementNode extends ParseTreeNode {
     public void run() {
         if (this.type == StatementType.Assign) {
             super.run();
-            ParseTreeNode.varTable.put(this.getChild(varNameInd).getVariableName(),
-                                       this.getChild(expIndex).getValue());
+            ParseTreeNode.varTable.put(this.getVariableName(),
+                                       this.getChild(assignExpIndex).getValue());
         } else if (this.type == StatementType.If ||
                    this.type == StatementType.IfElse) {
             ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
             expression.run();
             Object curValue = expression.getValue();
-            boolean isTrue = false;
+            boolean isTrue = false;          
             if (curValue instanceof Boolean) {
                 isTrue = ((Boolean) curValue);
             } else if (curValue instanceof Double) {
@@ -104,11 +113,25 @@ public class StatementNode extends ParseTreeNode {
             } else if (curValue instanceof Integer) {
                 isTrue = ((Integer) curValue) != 0;
             }
-            if (isTrue) {
+            if (isTrue) {                
                 this.getChild(state1Index).run();
             } else if (this.type == StatementType.IfElse) {
                 this.getChild(state2Index).run();
             }
+        } else if (this.type == StatementType.Print) {
+            ExpressionNode expression = (ExpressionNode) this.getChild(0);
+            expression.run();
+            Object curValue = expression.getValue();   
+            System.out.print(curValue);
+//            if (curValue instanceof Boolean) {
+//                System.out.print(((Boolean) curValue));
+//            } else if (curValue instanceof Double) {
+//                System.out.print(((Double) curValue));
+//                isTrue = ((Double) curValue) != 0;
+//            } else if (curValue instanceof Integer) {
+//                System.out.print(((Boolean) curValue));
+//                isTrue = ((Integer) curValue) != 0;
+//            }
         } else {
             super.run();
         }

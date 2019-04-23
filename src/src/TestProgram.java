@@ -14,18 +14,15 @@ import java_cup.runtime.Symbol;
  * @author kannie
  */
 public class TestProgram {
-    public static void main(String[] args) {
-        String input = "x=3;y=6;x+y;";
+    public static void main(String[] args) throws Exception {
+        String input = "x=3;\ny=3;\nif (x) {\nprint(x+y);\n} else {\nprint(x*y);\n}";
         Lexer lexer = new Lexer(new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8"))));
         parser p = new parser(lexer);
         String outputText = "";
-        try {
-            Symbol parse_tree = p.parse();
-            ParseTreeNode startNode = (ParseTreeNode) parse_tree.value;
-            startNode.run();
-        } catch (Throwable ex) {
-            outputText = ex.getMessage();
-        }
+        Symbol parse_tree = p.parse();
+        ParseTreeNode startNode = (ParseTreeNode) parse_tree.value;
+        System.out.println("");
+        startNode.run();
         System.out.println(outputText);
     }
     

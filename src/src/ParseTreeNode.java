@@ -77,4 +77,8 @@ public abstract class ParseTreeNode {
         if (!hasDouble) this.value = (int)dResult;
         else this.value =  dResult; 
     }
+    
+    protected void assignBooleanValue(boolean dResult) {
+        this.value =  dResult; 
+    }
 }

@@ -18,7 +18,7 @@ terminal String         ID;
 
 non terminal StatementNode      StatementList;
 non terminal StatementNode      Statement;
-non terminal ExpressionNode     Expression;
+non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression;
 non terminal TermNode           Term;
 non terminal FactorNode         Factor;
 
@@ -35,16 +35,33 @@ StatementList   ::=                             {:  RESULT = new StatementNode()
 Statement   ::= ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
                 | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
                 | WHILE LPAREN Expression:e RPAREN LBRACKET Statement:s RBRACKET
-                                                {:  RESULT = new StatementNode(2, e, s); :}
+                                                {:  RESULT = new StatementNode(sym.WHILE, e, s); :}
                 | IF LPAREN Expression:e RPAREN LBRACKET Statement:s RBRACKET
-                                                {:  RESULT = new StatementNode(1, e, s); :}
+                                                {:  RESULT = new StatementNode(sym.IF, e, s); :}
                 | IF LPAREN Expression:e RPAREN LBRACKET Statement:s1 RBRACKET ELSE LBRACKET Statement:s2 RBRACKET
                                                 {:  RESULT = new StatementNode(e, s1, s2); :}
                 | PRINT LPAREN Expression:e RPAREN SEMI
                                                 {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};
 
-Expression  ::= Expression:e PLUS Term:t        {:  RESULT = new ExpressionNode(sym.PLUS, e, t); :}
-                | Expression:e MINUS Term:t     {:  RESULT = new ExpressionNode(sym.MINUS, e, t); :}
+Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
+                | Arithmetic_Expression:a       {:  RESULT = a; :};
+
+Comparison_Expression     ::= Arithmetic_Expression:e1 LT Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.LT, e1, e2); :}
+                | Arithmetic_Expression:e1 LE Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.LE, e1, e2); :}
+                | Arithmetic_Expression:e1 EQ Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.EQ, e1, e2); :}
+                | Arithmetic_Expression:e1 GT Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.GT, e1, e2); :}
+                | Arithmetic_Expression:e1 GE Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.GE, e1, e2); :}
+                | Arithmetic_Expression:e1 NE Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.NE, e1, e2); :};
+
+Arithmetic_Expression  ::= Arithmetic_Expression:e PLUS Term:t        {:  RESULT = new ExpressionNode(sym.PLUS, e, t); :}
+                | Arithmetic_Expression:e MINUS Term:t     {:  RESULT = new ExpressionNode(sym.MINUS, e, t); :}
+                | 
                 | Term:t                        {:  RESULT = new ExpressionNode(t); :};
 
 Term        ::= Term:t TIMES Factor:f           {:  RESULT = new TermNode(sym.TIMES, t, f); :}
@@ -56,3 +73,5 @@ Factor      ::= NUMBER:num                      {:  RESULT = new FactorNode(new 
                 | REAL:real                     {:  RESULT = new FactorNode(new TerminalNode(real)); :}
                 | ID:id                         {:  RESULT = new FactorNode(new TerminalNode(id)); :}
                 | LPAREN Expression:e RPAREN    {:  RESULT = new FactorNode(e); :};
+
+

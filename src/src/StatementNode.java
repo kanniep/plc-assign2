@@ -61,10 +61,10 @@ public class StatementNode extends ParseTreeNode {
     // If
     public StatementNode(int statementType, ExpressionNode eNode, StatementNode sNode) {
         super();
-        if(statementType == 1){
+        if(statementType == sym.IF){
             type = StatementType.If;
             this.addNode(new TerminalNode(sym.IF));
-        }else if(statementType == 2){
+        }else if(statementType == sym.WHILE){
             type = StatementType.WHILE;
             this.addNode(new TerminalNode(sym.WHILE));
         }

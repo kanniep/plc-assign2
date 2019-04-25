@@ -15,7 +15,7 @@ import java_cup.runtime.Symbol;
  */
 public class TestProgram {
     public static void main(String[] args) throws Exception {
-        String input = "x=3;\ny=1;\nprint(x\n);\nwhile (x) {\nx = x - 1;}\nprint(x\n);";
+        String input = "x=3;\ny=0;\nprint(x<=y\n);\nprint(x\n);\nwhile (x) {\nx = x - 1;}\nprint(x\n);\nprint(x==y\n);\nif (y>=x) {\nprint (x+y);\n}\n";
         Lexer lexer = new Lexer(new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8"))));
         parser p = new parser(lexer);
         String outputText = "";

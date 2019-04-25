@@ -79,6 +79,8 @@ id = [:jletter:] [:jletterdigit:]*
 "{"               { System.out.print(" { "); return symbol(sym.LBRACKET); }
 "}"               { System.out.print(" } "); return symbol(sym.RBRACKET); }
 
+"while"             { System.out.print(" if "); return symbol(sym.WHILE); }
+
 "<"               { System.out.print(" < "); return symbol(sym.LT); }
 "<="               { System.out.print(" <= "); return symbol(sym.LE); }
 "=="               { System.out.print(" == "); return symbol(sym.EQ); }

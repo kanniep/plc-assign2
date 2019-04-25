@@ -15,7 +15,7 @@ import java_cup.runtime.Symbol;
  */
 public class TestProgram {
     public static void main(String[] args) {
-        String input = "x=3;y=6;x+y;";
+        String input = "x=3;y=6;if(x){x+y;}";
         Lexer lexer = new Lexer(new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8"))));
         parser p = new parser(lexer);
         String outputText = "";

@@ -17,7 +17,8 @@ public class StatementNode extends ParseTreeNode {
         Expression,
         Assign,
         If,
-        IfElse
+        IfElse,
+        WHILE,
     }
 
     private StatementType type = StatementType.Root;

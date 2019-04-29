@@ -141,7 +141,6 @@ public class StatementNode extends ParseTreeNode {
                 }
                 if (isTrue) {
                     this.getChild(state1Index).run();
-                    System.out.print("true");
                     isLoopTrue = true;
                 }else{
                     isLoopTrue = false;
@@ -152,16 +151,7 @@ public class StatementNode extends ParseTreeNode {
             ExpressionNode expression = (ExpressionNode) this.getChild(0);
             expression.run();
             Object curValue = expression.getValue();   
-            System.out.print(curValue);
-//            if (curValue instanceof Boolean) {
-//                System.out.print(((Boolean) curValue));
-//            } else if (curValue instanceof Double) {
-//                System.out.print(((Double) curValue));
-//                isTrue = ((Double) curValue) != 0;
-//            } else if (curValue instanceof Integer) {
-//                System.out.print(((Boolean) curValue));
-//                isTrue = ((Integer) curValue) != 0;
-//            }
+            System.out.println(curValue);
         } else {
             super.run();
         }

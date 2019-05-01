@@ -126,26 +126,21 @@ public class StatementNode extends ParseTreeNode {
                 this.getChild(state2Index).run();
             }
         } else if(this.type == StatementType.WHILE){
-            boolean isLoopTrue = true; 
-            while(isLoopTrue){
-                ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
-                expression.run();
-                Object curValue = expression.getValue();
-                boolean isTrue = false;          
-                if (curValue instanceof Boolean) {
-                    isTrue = ((Boolean) curValue);
-                } else if (curValue instanceof Double) {
-                    isTrue = ((Double) curValue) != 0;
-                } else if (curValue instanceof Integer) {
-                    isTrue = ((Integer) curValue) != 0;
-                }
-                if (isTrue) {
-                    this.getChild(state1Index).run();
-                    System.out.print("true");
-                    isLoopTrue = true;
-                }else{
-                    isLoopTrue = false;
-                }
+            ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
+            expression.run();
+            Object curValue = expression.getValue();
+            boolean isTrue = false;          
+            if (curValue instanceof Boolean) {
+                isTrue = ((Boolean) curValue);
+            } else if (curValue instanceof Double) {
+                isTrue = ((Double) curValue) != 0;
+            } else if (curValue instanceof Integer) {
+                isTrue = ((Integer) curValue) != 0;
+            }
+            if (isTrue) {
+                this.getChild(state1Index).run();
+                System.out.print("true");
+                this.run();
             }
             
         }else if (this.type == StatementType.Print) {

@@ -61,9 +61,15 @@ int = 0 | [1-9][0-9]* | -[1-9][0-9]*
 real = ({digit}+[.]{digit}*)|({digit}*[.]{digit}+)
 
 id = [:jletter:] [:jletterdigit:]*
+bool = true | false
 
 %%
 /* --------------Lexical Rules---------------------- */
+
+"int"              { System.out.print(" int "); return symbol(sym.INT); }
+"double"              { System.out.print(" double "); return symbol(sym.DOUBLE); }
+"char"              { System.out.print(" char "); return symbol(sym.CHAR); }
+"bool"              { System.out.print(" bool "); return symbol(sym.BOOLEAN); }
 
 "+"                { System.out.print(" + "); return symbol(sym.PLUS); }
 "-"                { System.out.print(" - "); return symbol(sym.MINUS); }
@@ -94,6 +100,8 @@ id = [:jletter:] [:jletterdigit:]*
                      return symbol(sym.NUMBER, new Integer(yytext())); }
 {real}              { System.out.print(" " + yytext() + " ");
                      return symbol(sym.REAL, new Double(yytext())); }
+{bool}              { System.out.print(" " + yytext() + " ");
+                     return symbol(sym.BOOL, new Boolean(yytext())); }
 
 {id}               { System.out.print(" " + yytext() + " ");
                      return symbol(sym.ID, yytext()); }

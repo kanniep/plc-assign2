@@ -12,8 +12,10 @@ terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
 terminal                LT, LE, EQ, NE, GT, GE;
 terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI;
 terminal                PRINT;
+terminal                INT, DOUBLE, CHAR, BOOLEAN;
 terminal Integer        NUMBER;
 terminal Double         REAL;
+terminal Boolean        BOOL;
 terminal String         ID;
 
 non terminal StatementNode      StatementList;
@@ -32,7 +34,15 @@ precedence left TIMES;
 StatementList   ::=                             {:  RESULT = new StatementNode(); :}
                 | StatementList:sl Statement:s  {:  RESULT = new StatementNode(sl, s); :};
 
-Statement   ::= ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+Statement   ::= INT ID:id SEMI                {:  RESULT = new StatementNode(sym.INT, id); :}
+                | DOUBLE ID:id SEMI                {:  RESULT = new StatementNode(sym.DOUBLE, id); :}
+                | BOOLEAN ID:id SEMI                {:  RESULT = new StatementNode(sym.BOOLEAN, id); :}
+
+                | INT ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.INT, id, e); :}
+                | DOUBLE ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.DOUBLE, id, e); :}
+                | BOOLEAN ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.BOOLEAN, id, e); :}
+
+                | ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
                 | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
                 | WHILE LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
                                                 {:  RESULT = new StatementNode(sym.WHILE, e, s); :}
@@ -71,6 +81,7 @@ Term        ::= Term:t TIMES Factor:f           {:  RESULT = new TermNode(sym.TI
 
 Factor      ::= NUMBER:num                      {:  RESULT = new FactorNode(new TerminalNode(num)); :}
                 | REAL:real                     {:  RESULT = new FactorNode(new TerminalNode(real)); :}
+                | BOOL:bool                     {:  RESULT = new FactorNode(new TerminalNode(bool)); :}
                 | ID:id                         {:  RESULT = new FactorNode(new TerminalNode(id)); :}
                 | LPAREN Expression:e RPAREN    {:  RESULT = new FactorNode(e); :};
 

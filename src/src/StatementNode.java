@@ -5,6 +5,7 @@
  */
 package src;
 
+
 /**
  *
  * @author kannie
@@ -15,6 +16,8 @@ public class StatementNode extends ParseTreeNode {
         Root,
         List,
         Expression,
+        Declaration,
+        DeclareAndAssign,
         Assign,
         If,
         IfElse,
@@ -48,6 +51,41 @@ public class StatementNode extends ParseTreeNode {
         this.addNode(node);
         this.addNode(new TerminalNode(sym.SEMI));
     }
+    
+    // Declaration variable statement
+    public StatementNode(int varType, String name) {
+        super();
+        type = StatementType.Declaration;
+        this.addNode(new TerminalNode(varType));
+        this.setVariableName(name);
+        
+        if(varType == sym.INT){
+            this.setVariableType(sym.INT);
+        }else if (varType == sym.DOUBLE){
+            this.setVariableType(sym.DOUBLE);
+        }else if (varType == sym.BOOLEAN){
+            this.setVariableType(sym.BOOLEAN);
+        }
+    }
+    
+    // Declaration and assign value of variable statement
+    public StatementNode(int varType, String name, ExpressionNode node) {
+        super();
+        type = StatementType.DeclareAndAssign;
+        this.addNode(new TerminalNode(varType));
+        this.setVariableName(name);
+        this.addNode(new TerminalNode(sym.ASSIGN));
+        this.addNode(node);
+        
+        if(varType == sym.INT){
+            this.setVariableType(sym.INT);
+        }else if (varType == sym.DOUBLE){
+            this.setVariableType(sym.DOUBLE);
+        }else if (varType == sym.BOOLEAN){
+            this.setVariableType(sym.BOOLEAN);
+        }
+        
+    }
 
     // Assignment statement
     public StatementNode(String name, ExpressionNode node) {
@@ -58,7 +96,7 @@ public class StatementNode extends ParseTreeNode {
         this.addNode(node);
     }
 
-    // If
+    // If and While
     public StatementNode(int statementType, ExpressionNode eNode, StatementNode sNode) {
         super();
         if(statementType == sym.IF){
@@ -105,9 +143,55 @@ public class StatementNode extends ParseTreeNode {
     public void run() {
         if (this.type == StatementType.Assign) {
             super.run();
-            ParseTreeNode.varTable.put(this.getVariableName(),
+            if(ParseTreeNode.typeTable.containsKey(this.getVariableName())){
+                Object curValue = this.getChild(assignExpIndex).getValue();
+                int varType = (int) ParseTreeNode.typeTable.get(this.getVariableName());
+                if( curValue instanceof Integer && varType == sym.INT ){
+                    ParseTreeNode.varTable.put(this.getVariableName(),
                                        this.getChild(assignExpIndex).getValue());
-        } else if (this.type == StatementType.If ||
+                }
+                else if( curValue instanceof Double && varType == sym.DOUBLE ){
+                    ParseTreeNode.varTable.put(this.getVariableName(),
+                                       this.getChild(assignExpIndex).getValue());
+                }else if( curValue instanceof Boolean && varType == sym.BOOLEAN ){
+                    ParseTreeNode.varTable.put(this.getVariableName(),
+                                       this.getChild(assignExpIndex).getValue());
+                }else {
+                    System.out.println("value of "+ this.getVariableName() + " variable is incompatible for this type");
+                    System.exit(0);
+                }
+            }else{
+                System.out.println("variable "+this.getVariableName()+" doesn't exist");
+                System.exit(0);
+            }
+        } else if (this.type == StatementType.Declaration){
+            super.run();
+            ParseTreeNode.typeTable.put(this.getVariableName(),
+                                       this.getVariableType());
+        } else if(this.type == StatementType.DeclareAndAssign){
+            ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
+            expression.run();
+            Object curValue = expression.getValue();
+            if (curValue instanceof Integer && this.getVariableType() == sym.INT) {
+                ParseTreeNode.typeTable.put(this.getVariableName(),
+                                       this.getVariableType());
+                ParseTreeNode.varTable.put(this.getVariableName(),
+                                       this.getChild(expIndex).getValue());
+            } else if (curValue instanceof Double && this.getVariableType() == sym.DOUBLE) {
+                ParseTreeNode.typeTable.put(this.getVariableName(),
+                                       this.getVariableType());
+                ParseTreeNode.varTable.put(this.getVariableName(),
+                                       this.getChild(expIndex).getValue());
+            } else if (curValue instanceof Boolean && this.getVariableType() == sym.BOOLEAN) {
+                ParseTreeNode.typeTable.put(this.getVariableName(),
+                                       this.getVariableType());
+                ParseTreeNode.varTable.put(this.getVariableName(),
+                                       this.getChild(expIndex).getValue());
+            } else{
+                System.out.print("value of "+ this.getVariableName() + " variable is incompatible for this type");
+                System.exit(0);
+            }
+        }else if (this.type == StatementType.If || 
                    this.type == StatementType.IfElse) {
             ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
             expression.run();
@@ -139,7 +223,6 @@ public class StatementNode extends ParseTreeNode {
             }
             if (isTrue) {
                 this.getChild(state1Index).run();
-                //System.out.print("true");
                 this.run();
             }          
             

@@ -10,7 +10,7 @@ import java_cup.runtime.*;
 
 terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
 terminal                LT, LE, EQ, NE, GT, GE;
-terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI, NEWLINE;
+terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI;
 terminal                PRINT;
 terminal Integer        NUMBER;
 terminal Double         REAL;
@@ -34,11 +34,11 @@ StatementList   ::=                             {:  RESULT = new StatementNode()
 
 Statement   ::= ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
                 | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
-                | WHILE LPAREN Expression:e RPAREN LBRACKET Statement:s RBRACKET
+                | WHILE LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
                                                 {:  RESULT = new StatementNode(sym.WHILE, e, s); :}
-                | IF LPAREN Expression:e RPAREN LBRACKET Statement:s RBRACKET
+                | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
                                                 {:  RESULT = new StatementNode(sym.IF, e, s); :}
-                | IF LPAREN Expression:e RPAREN LBRACKET Statement:s1 RBRACKET ELSE LBRACKET Statement:s2 RBRACKET
+                | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s1 RBRACKET ELSE LBRACKET StatementList:s2 RBRACKET
                                                 {:  RESULT = new StatementNode(e, s1, s2); :}
                 | PRINT LPAREN Expression:e RPAREN SEMI
                                                 {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};

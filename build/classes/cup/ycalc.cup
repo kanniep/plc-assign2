@@ -9,18 +9,19 @@ import java_cup.runtime.*;
 /* ------------Grammar symbol declarations----------- */
 
 terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
-terminal                LT, LE, EQ, NE, GT, GE;
+terminal                LT, LE, EQ, NE, GT, GE, AND, OR;
 terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI;
 terminal                PRINT;
-terminal                INT, DOUBLE, CHAR, BOOLEAN;
+terminal                INT, DOUBLE, BOOLEAN, CHARACTER;
 terminal Integer        NUMBER;
 terminal Double         REAL;
 terminal Boolean        BOOL;
+terminal char           CHAR;
 terminal String         ID;
 
 non terminal StatementNode      StatementList;
 non terminal StatementNode      Statement;
-non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression;
+non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Logical_Expression;
 non terminal TermNode           Term;
 non terminal FactorNode         Factor;
 
@@ -37,11 +38,9 @@ StatementList   ::=                             {:  RESULT = new StatementNode()
 Statement   ::= INT ID:id SEMI                {:  RESULT = new StatementNode(sym.INT, id); :}
                 | DOUBLE ID:id SEMI                {:  RESULT = new StatementNode(sym.DOUBLE, id); :}
                 | BOOLEAN ID:id SEMI                {:  RESULT = new StatementNode(sym.BOOLEAN, id); :}
-
                 | INT ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.INT, id, e); :}
                 | DOUBLE ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.DOUBLE, id, e); :}
                 | BOOLEAN ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.BOOLEAN, id, e); :}
-
                 | ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
                 | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
                 | WHILE LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
@@ -54,7 +53,14 @@ Statement   ::= INT ID:id SEMI                {:  RESULT = new StatementNode(sym
                                                 {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};
 
 Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
-                | Arithmetic_Expression:a       {:  RESULT = a; :};
+                | Arithmetic_Expression:a       {:  RESULT = a; :}
+                | Logical_Expression:l          {:  RESULT = l; :};
+
+
+Logical_Expression     ::= Comparison_Expression:c1 AND Comparison_Expression:c2
+                                                {:  RESULT = new ExpressionNode(sym.AND, c1, c2); :}
+                | Comparison_Expression:c1 OR Comparison_Expression:c2
+                                                {:  RESULT = new ExpressionNode(sym.OR, c1, c2); :};
 
 Comparison_Expression     ::= Arithmetic_Expression:e1 LT Arithmetic_Expression:e2
                                                 {:  RESULT = new ExpressionNode(sym.LT, e1, e2); :}

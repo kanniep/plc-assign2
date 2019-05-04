@@ -15,9 +15,10 @@ import java_cup.runtime.Symbol;
  */
 public class TestProgram {
     public static void main(String[] args) throws Exception {
-        String input = "bool x;\n x=1;\nint y=1;\nif(x){\nprint(x);\n}\n";
+        //String input = "char x;";
+        //String input = "bool x;\n x=true;\nbool y=false;\nif(x AND y){\nprint(x);\n}\n";
         //String input = "int x=1;\nint y=3;\nif(y){\nprint(y);\nif(x){\nprint(x);\n}\n}";
-        //String input = "x=3;\ny=0;\nwhile(x > 1){\nprint(x);\nx=x - 1;\n}\nif(y<=x){\nprint(x+y);\nprint(x-y);\nprint(x*y);\n}";
+        String input = "int x=3;\nint y=0;\nwhile(x > 1){\nprint(x);\nx=x - 1;\n}\nif(y<=x OR x > 10){\nprint(x+y);\nprint(x-y);\nprint(x*y);\n}";
         Lexer lexer = new Lexer(new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8"))));
         parser p = new parser(lexer);
         String outputText = "";

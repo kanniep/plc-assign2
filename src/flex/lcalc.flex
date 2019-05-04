@@ -63,12 +63,12 @@ real = ({digit}+[.]{digit}*)|({digit}*[.]{digit}+)
 id = [:jletter:] [:jletterdigit:]*
 bool = true | false
 
+
 %%
 /* --------------Lexical Rules---------------------- */
 
 "int"              { System.out.print(" int "); return symbol(sym.INT); }
 "double"              { System.out.print(" double "); return symbol(sym.DOUBLE); }
-"char"              { System.out.print(" char "); return symbol(sym.CHAR); }
 "bool"              { System.out.print(" bool "); return symbol(sym.BOOLEAN); }
 
 "+"                { System.out.print(" + "); return symbol(sym.PLUS); }
@@ -93,6 +93,9 @@ bool = true | false
 "<>"               { System.out.print(" <> "); return symbol(sym.NE); }
 ">"               { System.out.print(" > "); return symbol(sym.GT); }
 ">="               { System.out.print(" >= "); return symbol(sym.GE); }
+
+"AND"               { System.out.print(" AND "); return symbol(sym.AND); }
+"OR"               { System.out.print(" OR "); return symbol(sym.OR); }
 
 "print"               { System.out.print(" print "); return symbol(sym.PRINT); }
 

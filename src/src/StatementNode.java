@@ -161,6 +161,7 @@ public class StatementNode extends ParseTreeNode {
                     System.exit(0);
                 }
             }else{
+                
                 System.out.println("variable "+this.getVariableName()+" doesn't exist");
                 System.exit(0);
             }

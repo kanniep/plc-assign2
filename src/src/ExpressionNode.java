@@ -117,6 +117,34 @@ public class ExpressionNode extends ParseTreeNode {
         
     }
     
+    public void andOperation() {
+        ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
+        expression1.run();
+        Boolean value1 = (Boolean) expression1.getValue();
+        
+        ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
+        expression2.run();
+        Boolean value2 = (Boolean) expression2.getValue();
+        
+        boolean dResult = value1 && value2;
+        this.assignBooleanValue(dResult);
+        
+    }
+    
+    public void orOperation() {
+        ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
+        expression1.run();
+        Boolean value1 = (Boolean) expression1.getValue();
+        
+        ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
+        expression2.run();
+        Boolean value2 = (Boolean) expression2.getValue();
+        
+        boolean dResult = value1 || value2;
+        this.assignBooleanValue(dResult);
+        
+    }
+    
     @Override
     public void run() {
         super.run();
@@ -129,6 +157,8 @@ public class ExpressionNode extends ParseTreeNode {
                 case sym.EQ: this.equal(); break;
                 case sym.GT: this.greaterThan(); break;
                 case sym.GE: this.greaterThanEqual(); break;
+                case sym.AND: this.andOperation(); break;
+                case sym.OR: this.orOperation(); break;
             }
         } else {
             this.setValue(this.nodeList.get(0).getValue());

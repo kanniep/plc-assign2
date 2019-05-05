@@ -24,7 +24,7 @@ non terminal StatementNode      Statement;
 non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Logical_Expression, ExpressionList;
 non terminal TermNode           Term;
 non terminal FactorNode         Factor;
-non terminal                    VariableType, FunctionParameter;
+non terminal                    VariableType;
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -56,7 +56,7 @@ Statement   ::= VariableType:v ID:id SEMI                {:  RESULT = new Statem
                                                 {:  RESULT = new StatementNode(id); :};
 
 FunctionParameter   ::= VariableType:v ID:id COMMA FunctionParameter:p      
-                                                {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :}
+                                                {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id, p); :}
                 | VariableType:v ID:id
                                                 {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :};
 

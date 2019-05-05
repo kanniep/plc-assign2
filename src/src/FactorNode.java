@@ -5,6 +5,8 @@
  */
 package src;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author kannie
@@ -16,8 +18,8 @@ public class FactorNode extends ParseTreeNode {
     }
     
     @Override
-    public void run() {
-        super.run();
+    public void run(LinkedList<String> functionNameList) {
+        super.run(functionNameList);
         this.inheritFrom(this.getChild(0));
     }
 }

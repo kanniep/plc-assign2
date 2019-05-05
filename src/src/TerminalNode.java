@@ -5,6 +5,10 @@
  */
 package src;
 
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author kannie
@@ -30,17 +34,16 @@ public class TerminalNode extends ParseTreeNode {
     }
     
     @Override
-    public void run() {
+    public void run(LinkedList<String> functionNameList) {
         // Run only when call variable.
         if (this.getVariableName() != null){
-            
-            if (ParseTreeNode.varTable.get(this.getVariableName()) instanceof Variable){
-                Variable v = (Variable) ParseTreeNode.varTable.get(this.getVariableName());
+            Object curValue = ParseTreeNode.getVariableFromTable(functionNameList, this.getVariableName());
+            if (curValue instanceof Variable){
+                Variable v = (Variable) curValue;
                 this.setValue(v.getVarValue());
             }else{
-                this.setValue(ParseTreeNode.varTable.get(this.getVariableName()));
+                this.setValue(curValue);
             }
-            
         }
     }
 }

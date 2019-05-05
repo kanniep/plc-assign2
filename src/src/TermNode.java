@@ -5,6 +5,8 @@
  */
 package src;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author kannie
@@ -40,8 +42,8 @@ public class TermNode extends ParseTreeNode {
     }
     
     @Override
-    public void run() {
-        super.run();
+    public void run(LinkedList<String> functionNameList) {
+        super.run(functionNameList);
         if (this.hasOperation) {
             switch(this.nodeList.get(1).getSymbol()) {
                 case sym.TIMES: this.times(); break;

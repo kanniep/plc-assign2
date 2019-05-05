@@ -97,14 +97,16 @@ public abstract class ParseTreeNode {
     }
     
     public void run() {
+        LinkedList<String> functionNameList = new LinkedList<>();
+        functionNameList.add("global");
         this.nodeList.stream().forEachOrdered(node -> {
-           node.run();
+           node.run(functionNameList);
         });
     }
     
-    public void run(String functionName) {
+    public void run(LinkedList<String> functionNameList) {
         this.nodeList.stream().forEachOrdered(node -> {
-           node.run(functionName);
+           node.run(functionNameList);
         });
     }
     
@@ -121,5 +123,17 @@ public abstract class ParseTreeNode {
     
     protected void assignBooleanValue(boolean dResult) {
         this.value =  dResult; 
+    }
+    
+    static protected Object getVariableFromTable(LinkedList<String> functionNameList, String variableName) {
+        functionNameList.stream().forEachOrdered(curFunctionName -> {
+            Hashtable curTable = (Hashtable) ParseTreeNode.functionVariableTable.get(curFunctionName);
+            if (curTable.containsKey(variableName)) {
+                curTable.get(variableName);
+            }
+        });
+//        throw new Exception("Variable " + variableName + " not found");
+        System.out.println("Variable " + variableName + " not found");
+        return null;
     }
 }

@@ -124,6 +124,20 @@ public class ExpressionNode extends ParseTreeNode {
         
     }
     
+    public void notEqual() {
+        ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
+        expression1.run();
+        Number value1 = (Number) expression1.getValue();
+        
+        ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
+        expression2.run();
+        Number value2 = (Number) expression2.getValue();
+        
+        boolean dResult = value1.doubleValue() != value2.doubleValue();
+        this.assignBooleanValue(dResult);
+        
+    }
+    
     public void andOperation() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
         expression1.run();
@@ -165,6 +179,7 @@ public class ExpressionNode extends ParseTreeNode {
                 case sym.EQ: this.equal(); break;
                 case sym.GT: this.greaterThan(); break;
                 case sym.GE: this.greaterThanEqual(); break;
+                case sym.NE: this.notEqual(); break;
                 case sym.AND: this.andOperation(); break;
                 case sym.OR: this.orOperation(); break;
             }

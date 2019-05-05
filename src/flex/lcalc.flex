@@ -96,7 +96,7 @@ char = \'[a-z]\'
 "<"               { System.out.print(" < "); return symbol(sym.LT); }
 "<="               { System.out.print(" <= "); return symbol(sym.LE); }
 "=="               { System.out.print(" == "); return symbol(sym.EQ); }
-"<>"               { System.out.print(" <> "); return symbol(sym.NE); }
+"!="               { System.out.print(" != "); return symbol(sym.NE); }
 ">"               { System.out.print(" > "); return symbol(sym.GT); }
 ">="               { System.out.print(" >= "); return symbol(sym.GE); }
 

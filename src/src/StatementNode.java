@@ -42,6 +42,7 @@ public class StatementNode extends ParseTreeNode {
     public StatementNode() {
         super();
         this.functionName = "global";
+        ParseTreeNode.functionVariableTable.put("global", new Hashtable());
     }
 
     public StatementNode(String functionName) {
@@ -387,7 +388,10 @@ public class StatementNode extends ParseTreeNode {
         }
     }
     
-//    private Object runFunction(LinkedList<String> functionNameList) {
-//        this.getChild(0)
-//    }
+    private Object runFunction(LinkedList<String> functionNameList) {
+        for(int i=0; i<this.nodeList.size(); i++) {
+            this.getChild(i).run(functionNameList);
+        }
+        return this.getChild(this.nodeList.size() - 1).value;
+    }
 }

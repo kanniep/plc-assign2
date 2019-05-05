@@ -30,6 +30,7 @@ public class StatementNode extends ParseTreeNode {
         Function,
         FunctionCall,
         FunctionCallWithParam,
+        FunctionWithOutParam,
     }
 
     private StatementType type = StatementType.Root;
@@ -58,6 +59,7 @@ public class StatementNode extends ParseTreeNode {
         this.addNode(node2);
     }
     
+    // Function Cal with params
     public StatementNode(ExpressionNode node, String funcName) {
         super();
         type = StatementType.FunctionCallWithParam;
@@ -66,7 +68,8 @@ public class StatementNode extends ParseTreeNode {
         this.addNode(new TerminalNode(sym.SEMI));
     }
     
-    public StatementNode(String funcName) {
+    // Function Call
+    public StatementNode(String funcName, String notUse) {
         super();
         type = StatementType.FunctionCall;
         this.setVariableName(funcName);
@@ -166,6 +169,19 @@ public class StatementNode extends ParseTreeNode {
         this.setVariableName(funcName);
         this.addNode(new TerminalNode(sym.LPAREN));
         this.addNode(param);
+        this.addNode(new TerminalNode(sym.RPAREN));
+        this.addNode(new TerminalNode(sym.LBRACKET));
+        this.addNode(sNode);
+        this.addNode(new TerminalNode(sym.RBRACKET));
+    }
+    
+    // function declaration without param
+    public StatementNode(int func, String funcName, StatementNode sNode) {
+        type = StatementType.FunctionWithOutParam;
+
+        this.addNode(new TerminalNode(func));
+        this.setVariableName(funcName);
+        this.addNode(new TerminalNode(sym.LPAREN));
         this.addNode(new TerminalNode(sym.RPAREN));
         this.addNode(new TerminalNode(sym.LBRACKET));
         this.addNode(sNode);
@@ -322,16 +338,56 @@ public class StatementNode extends ParseTreeNode {
         } else if (this.type == StatementType.Function) {
             ParseTreeNode.functionVariableTable.put(this.getVariableName(), new Hashtable());
             ParseTreeNode.functionTable.put(this.getVariableName(), this.nodeList.get(5));
+            ParseTreeNode.functionParamsTable.put(this.getVariableName(), new LinkedList<Variable>());
+            LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
+            newFunctionNameList.push(this.getVariableName());
+            this.getChild(2).run(newFunctionNameList);
+        } else if (this.type == StatementType.FunctionWithOutParam) {
+            ParseTreeNode.functionVariableTable.put(this.getVariableName(), new Hashtable());
+            ParseTreeNode.functionTable.put(this.getVariableName(), this.nodeList.get(4));
+            ParseTreeNode.functionParamsTable.put(this.getVariableName(), new LinkedList<Variable>());
             LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
             newFunctionNameList.push(this.getVariableName());
             this.getChild(2).run(newFunctionNameList);
         } else if (this.type == StatementType.FunctionParam) {
             ((Hashtable) ParseTreeNode.functionVariableTable.get(functionNameList.get(0))).put(this.getVariableName(), new Variable(null, this.getVariableType()));
-            if (!this.nodeList.isEmpty()) {
+            ((LinkedList) ParseTreeNode.functionParamsTable.get(functionNameList.get(0))).add(new Variable(this.getVariableName(), this.getVariableType()));
+            if (this.nodeList.size() == 2) {
+                this.getChild(1).run(functionNameList);
+            }
+        } else if (this.type == StatementType.FunctionCall) {
+            if (!ParseTreeNode.functionTable.containsKey(this.getVariableName())) {
+                System.out.println("Function " + this.getVariableName() + " not found");
+            } else {
+                if (((LinkedList) ParseTreeNode.functionParamsTable.get(this.getVariableName())).isEmpty()) {
+                    ParseTreeNode functionNode = (ParseTreeNode) ParseTreeNode.functionTable.get(this.getVariableName());
+                    LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
+                    newFunctionNameList.push(this.getVariableName());
+                    functionNode.run(newFunctionNameList);
+                } else {
+                    System.out.println("Number of params should be 0");
+                }
+            }
+        } else if (this.type == StatementType.FunctionCallWithParam) {
+            if (!ParseTreeNode.functionTable.containsKey(this.getVariableName())) {
+                System.out.println("Function " + this.getVariableName() + " not found");
+            } else {
                 this.getChild(0).run(functionNameList);
+                if (this.getChild(0).checkParams(this.getVariableName(), 0)) {
+                    ParseTreeNode functionNode = (ParseTreeNode)  ParseTreeNode.functionTable.get(this.getVariableName());
+                    LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
+                    newFunctionNameList.push(this.getVariableName());
+                    functionNode.run(newFunctionNameList);
+                } else {
+                    System.out.println("Params is not correct");
+                }
             }
         } else {
             super.run(functionNameList);
         }
     }
+    
+//    private Object runFunction(LinkedList<String> functionNameList) {
+//        this.getChild(0)
+//    }
 }

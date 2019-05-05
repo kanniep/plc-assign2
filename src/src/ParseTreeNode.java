@@ -15,6 +15,7 @@ import java.util.LinkedList;
 public abstract class ParseTreeNode {
     public static Hashtable functionTable = new Hashtable();
     public static Hashtable functionVariableTable = new Hashtable();
+    public static Hashtable functionParamsTable = new Hashtable();
 
     protected LinkedList<ParseTreeNode> nodeList;
     protected Object value;
@@ -126,14 +127,45 @@ public abstract class ParseTreeNode {
     }
     
     static protected Object getVariableFromTable(LinkedList<String> functionNameList, String variableName) {
-        functionNameList.stream().forEachOrdered(curFunctionName -> {
+        Object result = null;
+        for(int i=0; i< functionNameList.size(); i++) {
+            String curFunctionName = functionNameList.get(i);
             Hashtable curTable = (Hashtable) ParseTreeNode.functionVariableTable.get(curFunctionName);
-            if (curTable.containsKey(variableName)) {
-                curTable.get(variableName);
+            if (curTable != null && curTable.containsKey(variableName)) {
+                return curTable.get(variableName);
             }
-        });
+        }
 //        throw new Exception("Variable " + variableName + " not found");
         System.out.println("Variable " + variableName + " not found");
         return null;
+    }
+    
+    protected boolean checkParams(String functionName, int paramIndex) {
+        boolean curResult = false;
+        LinkedList curParamList = (LinkedList) ParseTreeNode.functionParamsTable.get(functionName);
+        Variable curVar = (Variable) (curParamList).get(paramIndex);
+        Object childValue = this.getChild(0).value;
+        if (curVar.VarType == sym.INT && childValue instanceof Integer ||
+            curVar.VarType == sym.DOUBLE && childValue instanceof Double||
+            curVar.VarType == sym.BOOLEAN && childValue instanceof Boolean||
+            curVar.VarType == sym.CHARACTER && childValue instanceof Character  ) { 
+            ((Hashtable) ParseTreeNode.functionVariableTable.get(functionName)).put(curVar.name, childValue);
+            curResult = true;
+        } else {
+            curResult = false;
+        }
+        if (this.nodeList.size() == 2) {
+            if (curParamList.size() == paramIndex + 1) {
+                System.out.println("Too many params");
+                return false;
+            }
+            return curResult && this.getChild(1).checkParams(functionName, paramIndex + 1);
+        } else {
+            if (curParamList.size() != paramIndex + 1) {
+                System.out.println("Needed more params");
+                return false;
+            }
+            return curResult;
+        }
     }
 }

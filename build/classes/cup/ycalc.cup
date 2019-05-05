@@ -20,11 +20,11 @@ terminal Character      CHAR;
 terminal String         ID;
 
 non terminal StatementNode      StatementList;
-non terminal StatementNode      Statement;
+non terminal StatementNode      Statement, FunctionParameter;
 non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Logical_Expression, ExpressionList;
 non terminal TermNode           Term;
 non terminal FactorNode         Factor;
-non terminal                    VariableType, FunctionParameter;
+non terminal                    VariableType;
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -50,13 +50,15 @@ Statement   ::= VariableType:v ID:id SEMI                {:  RESULT = new Statem
                                                 {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :}
                 | FUNCTION ID:id LPAREN FunctionParameter:param RPAREN LBRACKET StatementList:s1 RBRACKET
                                                 {:  RESULT = new StatementNode(sym.FUNCTION, id, (StatementNode) param, s1); :}
+                | FUNCTION ID:id LPAREN RPAREN LBRACKET StatementList:s1 RBRACKET
+                                                {:  RESULT = new StatementNode(sym.FUNCTION, id, s1); :}
                 | ID:id LPAREN ExpressionList:e RPAREN SEMI
                                                 {:  RESULT = new StatementNode(e, id); :}
                 | ID:id LPAREN RPAREN SEMI
-                                                {:  RESULT = new StatementNode(id); :};
+                                                {:  RESULT = new StatementNode(id, "eieigum"); :};
 
 FunctionParameter   ::= VariableType:v ID:id COMMA FunctionParameter:p      
-                                                {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :}
+                                                {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id, p); :}
                 | VariableType:v ID:id
                                                 {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :};
 

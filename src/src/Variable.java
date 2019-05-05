@@ -13,10 +13,17 @@ public class Variable {
     
     public Object VarValue;
     public int VarType;
+    public String name = null;
     
     public Variable(Object value, int type){
         this.VarValue = value;
         this.VarType = type;
+    }
+    
+    public Variable(String name, int type){
+        this.name = name;
+        this.VarType = type;
+        this.VarValue = null;
     }
     
     Object getVarValue(){

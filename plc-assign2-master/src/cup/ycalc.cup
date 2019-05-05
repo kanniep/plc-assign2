@@ -1,0 +1,91 @@
+/* ----------------------User code--------------------*/
+
+package src;
+
+import java.util.*;
+import java.io.*;
+import java_cup.runtime.*;
+
+/* ------------Grammar symbol declarations----------- */
+
+terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
+terminal                LT, LE, EQ, NE, GT, GE, AND, OR;
+terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI, NEWLINE;
+terminal                INT, FLOAT, DOUBLE, BOOL;
+terminal                PRINT;
+terminal Integer        NUMBER;
+terminal Double         REAL;
+terminal String         ID;
+terminal Boolean        BOOLEAN;
+
+non terminal StatementNode      StatementList;
+non terminal StatementNode      Statement;
+non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Condition_Expression;
+non terminal TermNode           Term;
+non terminal FactorNode         Factor;
+
+/* Precedences */
+precedence left PLUS, MINUS;
+precedence left TIMES;
+
+/* ------------Grammar rules----------- */
+
+
+StatementList   ::=                             {:  RESULT = new StatementNode(); :}
+                | StatementList:sl Statement:s  {:  RESULT = new StatementNode(sl, s); :};
+
+Statement   ::= ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+                | INT ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+                | FLOAT ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+                | DOUBLE ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+                | BOOL ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
+                | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
+                | WHILE LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
+                                                {:  RESULT = new StatementNode(sym.WHILE, e, s); :}
+                | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
+                                                {:  RESULT = new StatementNode(sym.IF, e, s); :}
+                | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s1 RBRACKET ELSE LBRACKET StatementList:s2 RBRACKET
+                                                {:  RESULT = new StatementNode(e, s1, s2); :}
+                | PRINT LPAREN Expression:e RPAREN SEMI
+                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};
+
+Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
+                | Arithmetic_Expression:a       {:  RESULT = a; :};
+
+Comparison_Expression     ::= Arithmetic_Expression:e1 LT Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.LT, e1, e2); :}
+                | Arithmetic_Expression:e1 LE Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.LE, e1, e2); :}
+                | Arithmetic_Expression:e1 EQ Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.EQ, e1, e2); :}
+                | Arithmetic_Expression:e1 GT Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.GT, e1, e2); :}
+                | Arithmetic_Expression:e1 GE Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.GE, e1, e2); :}
+                | Arithmetic_Expression:e1 NE Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.NE, e1, e2); :}
+                | Arithmetic_Expression:e1 AND Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.AND, e1, e2); :}
+                | Arithmetic_Expression:e1 OR Arithmetic_Expression:e2
+                                                {:  RESULT = new ExpressionNode(sym.OR, e1, e2); :};
+
+Arithmetic_Expression  ::= Arithmetic_Expression:e PLUS Term:t        {:  RESULT = new ExpressionNode(sym.PLUS, e, t); :}
+                | Arithmetic_Expression:e MINUS Term:t     {:  RESULT = new ExpressionNode(sym.MINUS, e, t); :}
+                | 
+                | Term:t                        {:  RESULT = new ExpressionNode(t); :};
+
+
+
+Term        ::= Term:t TIMES Factor:f           {:  RESULT = new TermNode(sym.TIMES, t, f); :}
+                | Term:t DIVIDE Factor:f        {:  RESULT = new TermNode(sym.DIVIDE, t, f); :}
+                | Factor:f                      {:  RESULT = new TermNode(f); :};
+
+
+
+Factor      ::= NUMBER:num                      {:  RESULT = new FactorNode(new TerminalNode(num)); :}
+                | REAL:real                     {:  RESULT = new FactorNode(new TerminalNode(real)); :}
+                | ID:id                         {:  RESULT = new FactorNode(new TerminalNode(id)); :}
+                | BOOLEAN:Boolean               {:  RESULT = new FactorNode(new TerminalNode(Boolean)); :}
+                | LPAREN Expression:e RPAREN    {:  RESULT = new FactorNode(e); :};
+
+

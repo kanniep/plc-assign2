@@ -32,12 +32,18 @@ public class StatementNode extends ParseTreeNode {
     private StatementType type = StatementType.Root;
     private static final int expIndex = 2, assignExpIndex = 1, state1Index = 5,
                              state2Index = 9;
-    
+    protected String functionName = null;
+    protected LinkedList<Variable> nodeList;
 
     // Root node
     public StatementNode() {
         super();
-       
+        this.functionName = "global";
+    }
+    
+     public StatementNode(String functionName) {
+        super();
+        this.functionName = functionName;
     }
 
     // List of statements

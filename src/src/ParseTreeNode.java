@@ -13,7 +13,8 @@ import java.util.LinkedList;
  * @author kannie
  */
 public abstract class ParseTreeNode {
-    public static Hashtable varTable = new Hashtable();
+    public static Hashtable functionTable = new Hashtable();
+    public static Hashtable functionVariableTable = new Hashtable();
 
     protected LinkedList<ParseTreeNode> nodeList;
     protected Object value;
@@ -98,6 +99,12 @@ public abstract class ParseTreeNode {
     public void run() {
         this.nodeList.stream().forEachOrdered(node -> {
            node.run();
+        });
+    }
+    
+    public void run(String functionName) {
+        this.nodeList.stream().forEachOrdered(node -> {
+           node.run(functionName);
         });
     }
     

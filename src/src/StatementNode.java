@@ -27,6 +27,8 @@ public class StatementNode extends ParseTreeNode {
         Print,
         FunctionParam,
         Function,
+        FunctionCall,
+        FunctionCallWithParam,
     }
 
     private StatementType type = StatementType.Root;
@@ -48,6 +50,21 @@ public class StatementNode extends ParseTreeNode {
             this.addNode(curNode);
         });
         this.addNode(node2);
+    }
+    
+    public StatementNode(ExpressionNode node, String funcName) {
+        super();
+        type = StatementType.FunctionCallWithParam;
+        this.setVariableName(funcName);
+        this.addNode(node);
+        this.addNode(new TerminalNode(sym.SEMI));
+    }
+    
+    public StatementNode(String funcName) {
+        super();
+        type = StatementType.FunctionCall;
+        this.setVariableName(funcName);
+        this.addNode(new TerminalNode(sym.SEMI));
     }
 
     // From an expression

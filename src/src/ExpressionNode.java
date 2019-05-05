@@ -5,6 +5,8 @@
  */
 package src;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author kannie
@@ -56,11 +58,9 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void lessThan() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         Number value1 = (Number) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Number value2 = (Number) expression2.getValue();
         
         boolean dResult = value1.doubleValue() < value2.doubleValue();
@@ -70,11 +70,9 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void lessThanEqual() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         Number value1 = (Number) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Number value2 = (Number) expression2.getValue();
         
         boolean dResult = value1.doubleValue() <= value2.doubleValue();
@@ -84,11 +82,9 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void equal() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         Number value1 = (Number) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Number value2 = (Number) expression2.getValue();
         
         boolean dResult = value1.doubleValue() == value2.doubleValue();
@@ -98,11 +94,9 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void greaterThan() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         Number value1 = (Number) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Number value2 = (Number) expression2.getValue();
         
         boolean dResult = value1.doubleValue() > value2.doubleValue();
@@ -112,11 +106,9 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void greaterThanEqual() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         Number value1 = (Number) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Number value2 = (Number) expression2.getValue();
         
         boolean dResult = value1.doubleValue() >= value2.doubleValue();
@@ -140,12 +132,10 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void andOperation() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         
         Boolean value1 = (Boolean) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Boolean value2 = (Boolean) expression2.getValue();
         
         boolean dResult = value1 && value2;
@@ -155,11 +145,9 @@ public class ExpressionNode extends ParseTreeNode {
     
     public void orOperation() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
-        expression1.run();
         Boolean value1 = (Boolean) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);
-        expression2.run();
         Boolean value2 = (Boolean) expression2.getValue();
         
         boolean dResult = value1 || value2;
@@ -168,8 +156,8 @@ public class ExpressionNode extends ParseTreeNode {
     }
     
     @Override
-    public void run() {
-        super.run();
+    public void run(LinkedList<String> functionNameList) {
+        super.run(functionNameList);
         if (this.hasOperation) {
             switch(this.nodeList.get(1).getSymbol()) {
                 case sym.PLUS: this.add(); break;

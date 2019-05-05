@@ -47,21 +47,13 @@ Statement   ::= VariableType:v ID:id SEMI                {:  RESULT = new Statem
                 | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s1 RBRACKET ELSE LBRACKET StatementList:s2 RBRACKET
                                                 {:  RESULT = new StatementNode(e, s1, s2); :}
                 | PRINT LPAREN Expression:e RPAREN SEMI
-                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :}
-                | ID:id LPAREN FunctionParameter:param RPAREN LBRACKET StatementList:s1 RBRACKET
-                                                {:  RESULT = ; :};
-
-FunctionParameter   ::= VariableType:v ID:id COMMA FunctionParameter:p      
-                                                {: RESULT = ; :}
-                | VariableType:v ID:id
-                                                {: RESULT = ; :}
+                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};
 
 VariableType    ::= INT                         {: RESULT = sym.INT; :}
                 | DOUBLE                        {: RESULT = sym.DOUBLE; :}
                 | BOOLEAN                       {: RESULT = sym.BOOLEAN; :};
 
 Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
-                | Arithmetic_Expression:a       {:  RESULT = a; :}
                 | Logical_Expression:l          {:  RESULT = l; :};
 
 
@@ -82,11 +74,12 @@ Comparison_Expression     ::= Arithmetic_Expression:e1 LT Arithmetic_Expression:
                 | Arithmetic_Expression:e1 GE Arithmetic_Expression:e2
                                                 {:  RESULT = new ExpressionNode(sym.GE, e1, e2); :}
                 | Arithmetic_Expression:e1 NE Arithmetic_Expression:e2
-                                                {:  RESULT = new ExpressionNode(sym.NE, e1, e2); :};
+                                                {:  RESULT = new ExpressionNode(sym.NE, e1, e2); :}
+                | Arithmetic_Expression:a       {:  RESULT = a; :};
+
 
 Arithmetic_Expression  ::= Arithmetic_Expression:e PLUS Term:t        {:  RESULT = new ExpressionNode(sym.PLUS, e, t); :}
                 | Arithmetic_Expression:e MINUS Term:t     {:  RESULT = new ExpressionNode(sym.MINUS, e, t); :}
-                | 
                 | Term:t                        {:  RESULT = new ExpressionNode(t); :};
 
 Term        ::= Term:t TIMES Factor:f           {:  RESULT = new TermNode(sym.TIMES, t, f); :}

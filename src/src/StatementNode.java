@@ -161,6 +161,7 @@ public class StatementNode extends ParseTreeNode {
                     ParseTreeNode.varTable.put(this.getVariableName(),
                                        this.getVariable());
                 }else {
+                    //System.out.println(varType);
                     System.out.println("value of "+ this.getVariableName() + " variable is incompatible for this type");
                     System.exit(0);
                 }
@@ -193,6 +194,7 @@ public class StatementNode extends ParseTreeNode {
                 ParseTreeNode.varTable.put(this.getVariableName(),
                                        this.getVariable());
             } else{
+                //System.out.println(this.getVariableType());
                 System.out.print("value of "+ this.getVariableName() + " variable is incompatible for this type");
                 System.exit(0);
             }

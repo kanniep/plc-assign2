@@ -120,6 +120,7 @@ public class ExpressionNode extends ParseTreeNode {
     public void andOperation() {
         ExpressionNode expression1 = (ExpressionNode) this.getChild(0);
         expression1.run();
+        
         Boolean value1 = (Boolean) expression1.getValue();
         
         ExpressionNode expression2 = (ExpressionNode) this.getChild(2);

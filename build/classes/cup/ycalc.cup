@@ -10,7 +10,7 @@ import java_cup.runtime.*;
 
 terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
 terminal                LT, LE, EQ, NE, GT, GE, AND, OR;
-terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI;
+terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI, COMMA;
 terminal                PRINT;
 terminal                INT, DOUBLE, BOOLEAN, CHARACTER;
 terminal Integer        NUMBER;
@@ -24,6 +24,7 @@ non terminal StatementNode      Statement;
 non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Logical_Expression;
 non terminal TermNode           Term;
 non terminal FactorNode         Factor;
+non terminal                    VariableType, FunctionParameter;
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -35,12 +36,8 @@ precedence left TIMES;
 StatementList   ::=                             {:  RESULT = new StatementNode(); :}
                 | StatementList:sl Statement:s  {:  RESULT = new StatementNode(sl, s); :};
 
-Statement   ::= INT ID:id SEMI                {:  RESULT = new StatementNode(sym.INT, id); :}
-                | DOUBLE ID:id SEMI                {:  RESULT = new StatementNode(sym.DOUBLE, id); :}
-                | BOOLEAN ID:id SEMI                {:  RESULT = new StatementNode(sym.BOOLEAN, id); :}
-                | INT ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.INT, id, e); :}
-                | DOUBLE ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.DOUBLE, id, e); :}
-                | BOOLEAN ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(sym.BOOLEAN, id, e); :}
+Statement   ::= VariableType:v ID:id SEMI                {:  RESULT = new StatementNode((int) v, id); :}
+                | VariableType:v ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode((int) v, id, e); :}
                 | ID:id ASSIGN Expression:e SEMI  {:  RESULT = new StatementNode(id, e); :}
                 | Expression:e SEMI             {:  RESULT = new StatementNode(e); :}
                 | WHILE LPAREN Expression:e RPAREN LBRACKET StatementList:s RBRACKET
@@ -50,7 +47,18 @@ Statement   ::= INT ID:id SEMI                {:  RESULT = new StatementNode(sym
                 | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s1 RBRACKET ELSE LBRACKET StatementList:s2 RBRACKET
                                                 {:  RESULT = new StatementNode(e, s1, s2); :}
                 | PRINT LPAREN Expression:e RPAREN SEMI
-                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};
+                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :}
+                | ID:id LPAREN FunctionParameter:param RPAREN LBRACKET StatementList:s1 RBRACKET
+                                                {:  RESULT = ; :};
+
+FunctionParameter   ::= VariableType:v ID:id COMMA FunctionParameter:p      
+                                                {: RESULT = ; :}
+                | VariableType:v ID:id
+                                                {: RESULT = ; :}
+
+VariableType    ::= INT                         {: RESULT = sym.INT; :}
+                | DOUBLE                        {: RESULT = sym.DOUBLE; :}
+                | BOOLEAN                       {: RESULT = sym.BOOLEAN; :};
 
 Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
                 | Arithmetic_Expression:a       {:  RESULT = a; :}
@@ -61,6 +69,7 @@ Logical_Expression     ::= Comparison_Expression:c1 AND Comparison_Expression:c2
                                                 {:  RESULT = new ExpressionNode(sym.AND, c1, c2); :}
                 | Comparison_Expression:c1 OR Comparison_Expression:c2
                                                 {:  RESULT = new ExpressionNode(sym.OR, c1, c2); :};
+                                   
 
 Comparison_Expression     ::= Arithmetic_Expression:e1 LT Arithmetic_Expression:e2
                                                 {:  RESULT = new ExpressionNode(sym.LT, e1, e2); :}

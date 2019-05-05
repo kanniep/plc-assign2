@@ -79,6 +79,7 @@ bool = true | false
 "("               { System.out.print(" ( "); return symbol(sym.LPAREN); }
 ")"               { System.out.print(" ) "); return symbol(sym.RPAREN); }
 ";"               { System.out.print(" ; "); return symbol(sym.SEMI); }
+","               { System.out.print(" , "); return symbol(sym.COMMA); }
 
 "if"               { System.out.print(" if "); return symbol(sym.IF); }
 "else"               { System.out.print(" else "); return symbol(sym.ELSE); }

@@ -14,13 +14,14 @@ import java.util.LinkedList;
  */
 public abstract class ParseTreeNode {
     public static Hashtable varTable = new Hashtable();
-    public static Hashtable typeTable = new Hashtable();
 
     protected LinkedList<ParseTreeNode> nodeList;
     protected Object value;
     private int symbol;
     private String variableName = null;
     private int variableType;
+    
+    private Variable var;
 
     public ParseTreeNode() {
         nodeList = new LinkedList<>();
@@ -59,6 +60,16 @@ public abstract class ParseTreeNode {
         this.variableType = variableType;
     }
     
+    //////////////////////////////////////////
+    public Variable getVariable() {
+        return var;
+    }
+
+    public void setVariable(Object value, int variableType) {
+        this.var = new Variable(value, variableType);
+    }
+    //////////////////////////////////////////
+    
     public void inheritFrom(ParseTreeNode node) {
         this.symbol = node.getSymbol();
         this.value = node.getValue();
@@ -85,7 +96,9 @@ public abstract class ParseTreeNode {
     
     protected void assignNumberValue(double dResult, boolean hasDouble) {
         if (!hasDouble) this.value = (int)dResult;
-        else this.value =  dResult; 
+        else {
+            this.value =  dResult;
+        } 
     }
     
     protected void assignBooleanValue(boolean dResult) {

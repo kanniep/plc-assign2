@@ -63,6 +63,8 @@ real = ({digit}+[.]{digit}*)|({digit}*[.]{digit}+)
 id = [:jletter:] [:jletterdigit:]*
 bool = true | false
 
+char = \'[a-z]\'
+
 
 %%
 /* --------------Lexical Rules---------------------- */
@@ -70,6 +72,7 @@ bool = true | false
 "int"              { System.out.print(" int "); return symbol(sym.INT); }
 "double"              { System.out.print(" double "); return symbol(sym.DOUBLE); }
 "bool"              { System.out.print(" bool "); return symbol(sym.BOOLEAN); }
+"char"              { System.out.print(" char "); return symbol(sym.CHARACTER); }
 
 "+"                { System.out.print(" + "); return symbol(sym.PLUS); }
 "-"                { System.out.print(" - "); return symbol(sym.MINUS); }
@@ -87,6 +90,8 @@ bool = true | false
 "}"               { System.out.print(" } "); return symbol(sym.RBRACKET); }
 
 "while"             { System.out.print(" while "); return symbol(sym.WHILE); }
+
+"function"          { System.out.print(" function "); return symbol(sym.FUNCTION); }
 
 "<"               { System.out.print(" < "); return symbol(sym.LT); }
 "<="               { System.out.print(" <= "); return symbol(sym.LE); }
@@ -106,6 +111,8 @@ bool = true | false
                      return symbol(sym.REAL, new Double(yytext())); }
 {bool}              { System.out.print(" " + yytext() + " ");
                      return symbol(sym.BOOL, new Boolean(yytext())); }
+{char}              { System.out.print(" " + yytext() + " ");
+                     return symbol(sym.CHAR, (Character)(yytext().charAt(1))); }
 
 {id}               { System.out.print(" " + yytext() + " ");
                      return symbol(sym.ID, yytext()); }

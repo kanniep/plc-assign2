@@ -22,10 +22,21 @@ public abstract class ParseTreeNode {
     private int variableType;
     
     private Variable var;
+    
+    protected LinkedList<Variable> paramList;
 
     public ParseTreeNode() {
         nodeList = new LinkedList<>();
+        paramList = new LinkedList<>();
         value = null;
+    }
+    
+    public void addParamList(Variable v){
+        paramList.add(v);
+    }
+    
+    public LinkedList gerParamList(){
+        return this.paramList;
     }
 
     public Object getValue() {

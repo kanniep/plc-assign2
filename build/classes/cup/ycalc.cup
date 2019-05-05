@@ -10,13 +10,13 @@ import java_cup.runtime.*;
 
 terminal                PLUS, MINUS, TIMES, DIVIDE, ASSIGN, LPAREN, RPAREN;
 terminal                LT, LE, EQ, NE, GT, GE, AND, OR;
-terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI, COMMA;
+terminal                IF, ELSE, WHILE, LBRACKET, RBRACKET, SEMI, COMMA, FUNCTION;
 terminal                PRINT;
 terminal                INT, DOUBLE, BOOLEAN, CHARACTER;
 terminal Integer        NUMBER;
 terminal Double         REAL;
 terminal Boolean        BOOL;
-terminal char           CHAR;
+terminal Character      CHAR;
 terminal String         ID;
 
 non terminal StatementNode      StatementList;
@@ -47,11 +47,19 @@ Statement   ::= VariableType:v ID:id SEMI                {:  RESULT = new Statem
                 | IF LPAREN Expression:e RPAREN LBRACKET StatementList:s1 RBRACKET ELSE LBRACKET StatementList:s2 RBRACKET
                                                 {:  RESULT = new StatementNode(e, s1, s2); :}
                 | PRINT LPAREN Expression:e RPAREN SEMI
-                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :};
+                                                {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :}
+                | FUNCTION ID:id LPAREN FunctionParameter:param RPAREN LBRACKET StatementList:s1 RBRACKET
+                                                {:  RESULT = new StatementNode(sym.FUNCTION, id, (StatementNode) param, s1); :};
+
+FunctionParameter   ::= VariableType:v ID:id COMMA FunctionParameter:p      
+                                                {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :}
+                | VariableType:v ID:id
+                                                {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :};
 
 VariableType    ::= INT                         {: RESULT = sym.INT; :}
                 | DOUBLE                        {: RESULT = sym.DOUBLE; :}
-                | BOOLEAN                       {: RESULT = sym.BOOLEAN; :};
+                | BOOLEAN                       {: RESULT = sym.BOOLEAN; :}
+                | CHARACTER                     {: RESULT = sym.CHARACTER; :};
 
 Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
                 | Logical_Expression:l          {:  RESULT = l; :};
@@ -90,6 +98,7 @@ Term        ::= Term:t TIMES Factor:f           {:  RESULT = new TermNode(sym.TI
 Factor      ::= NUMBER:num                      {:  RESULT = new FactorNode(new TerminalNode(num)); :}
                 | REAL:real                     {:  RESULT = new FactorNode(new TerminalNode(real)); :}
                 | BOOL:bool                     {:  RESULT = new FactorNode(new TerminalNode(bool)); :}
+                | CHAR:ch                     {:  RESULT = new FactorNode(new TerminalNode(ch)); :}
                 | ID:id                         {:  RESULT = new FactorNode(new TerminalNode(id)); :}
                 | LPAREN Expression:e RPAREN    {:  RESULT = new FactorNode(e); :};
 

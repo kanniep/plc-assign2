@@ -17,6 +17,13 @@ public class ExpressionNode extends ParseTreeNode {
         this.addNode(node);
     }
     
+    // function call with parameters
+    public ExpressionNode(ExpressionNode node1, ExpressionNode node2) {
+        super();
+        this.addNode(node1);
+        this.addNode(node2);
+    }
+    
     public ExpressionNode(int symbol, ExpressionNode node1, TermNode node2) {
         super();
         this.addNode(node1);

@@ -21,7 +21,7 @@ terminal String         ID;
 
 non terminal StatementNode      StatementList;
 non terminal StatementNode      Statement;
-non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Logical_Expression;
+non terminal ExpressionNode     Expression, Comparison_Expression, Arithmetic_Expression, Logical_Expression, ExpressionList;
 non terminal TermNode           Term;
 non terminal FactorNode         Factor;
 non terminal                    VariableType, FunctionParameter;
@@ -49,7 +49,11 @@ Statement   ::= VariableType:v ID:id SEMI                {:  RESULT = new Statem
                 | PRINT LPAREN Expression:e RPAREN SEMI
                                                 {:  RESULT = new StatementNode(StatementNode.StatementType.Print, e); :}
                 | FUNCTION ID:id LPAREN FunctionParameter:param RPAREN LBRACKET StatementList:s1 RBRACKET
-                                                {:  RESULT = new StatementNode(sym.FUNCTION, id, (StatementNode) param, s1); :};
+                                                {:  RESULT = new StatementNode(sym.FUNCTION, id, (StatementNode) param, s1); :}
+                | ID:id LPAREN ExpressionList:e RPAREN SEMI
+                                                {:  RESULT = new StatementNode(e, id); :}
+                | ID:id LPAREN RPAREN SEMI
+                                                {:  RESULT = new StatementNode(id); :};
 
 FunctionParameter   ::= VariableType:v ID:id COMMA FunctionParameter:p      
                                                 {: RESULT = new StatementNode(sym.FUNCTION, (int) v, id); :}
@@ -60,6 +64,11 @@ VariableType    ::= INT                         {: RESULT = sym.INT; :}
                 | DOUBLE                        {: RESULT = sym.DOUBLE; :}
                 | BOOLEAN                       {: RESULT = sym.BOOLEAN; :}
                 | CHARACTER                     {: RESULT = sym.CHARACTER; :};
+
+ExpressionList  ::= Expression:e COMMA ExpressionList:el
+                                                {:  RESULT = new ExpressionNode(e, el); :}
+                | Expression:e
+                                                {:  RESULT = e; :};
 
 Expression ::= Comparison_Expression:c          {:  RESULT = c; :}
                 | Logical_Expression:l          {:  RESULT = l; :};

@@ -63,7 +63,7 @@ real = ({digit}+[.]{digit}*)|({digit}*[.]{digit}+)
 id = [:jletter:] [:jletterdigit:]*
 bool = true | false
 
-char = \'[a-z]\'
+char = \'[:jletterdigit:]\'
 
 
 %%

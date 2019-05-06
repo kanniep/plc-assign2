@@ -142,26 +142,29 @@ public abstract class ParseTreeNode {
     
     protected boolean checkParams(String functionName, int paramIndex) {
         boolean curResult = false;
-        LinkedList curParamList = (LinkedList) ParseTreeNode.functionParamsTable.get(functionName);
-        Variable curVar = (Variable) (curParamList).get(paramIndex);
-        Object childValue = this.getChild(0).value;
+        LinkedList curParamList = (LinkedList) ParseTreeNode.functionParamsTable.get(functionName); // list of params of this function
+        Variable curVar = (Variable) (curParamList).get(paramIndex); // get param variable object from params list by using specific paramIndex
+        Object childValue = this.getChild(0).value; // get value that is passed as a parameter
+        // if param type and type of value that is passed as a parameter is match
         if (curVar.VarType == sym.INT && childValue instanceof Integer ||
             curVar.VarType == sym.DOUBLE && childValue instanceof Double||
             curVar.VarType == sym.BOOLEAN && childValue instanceof Boolean||
             curVar.VarType == sym.CHARACTER && childValue instanceof Character  ) { 
+            // get hashtable of this function                                   put param name as a key and value is param value
             ((Hashtable) ParseTreeNode.functionVariableTable.get(functionName)).put(curVar.name, childValue);
             curResult = true;
         } else {
             curResult = false;
         }
+        // if have next param ( param that put by user )
         if (this.nodeList.size() == 2) {
             if (curParamList.size() == paramIndex + 1) {
                 System.out.println("Too many params");
                 return false;
             }
-            return curResult && this.getChild(1).checkParams(functionName, paramIndex + 1);
-        } else {
-            if (curParamList.size() != paramIndex + 1) {
+            return curResult && this.getChild(1).checkParams(functionName, paramIndex + 1); // check next param
+        } else { // if doesn't have next param
+            if (curParamList.size() != paramIndex + 1) { // param that function require is more than this
                 System.out.println("Needed more params");
                 return false;
             }

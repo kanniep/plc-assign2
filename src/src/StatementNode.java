@@ -60,7 +60,7 @@ public class StatementNode extends ParseTreeNode {
         this.addNode(node2);
     }
     
-    // Function Cal with params
+    // Function Call with params
     public StatementNode(ExpressionNode node, String funcName) {
         super();
         type = StatementType.FunctionCallWithParam;
@@ -235,15 +235,16 @@ public class StatementNode extends ParseTreeNode {
     @Override
     public void run(LinkedList<String> functionNameList) {
         Hashtable curVariableTable = (Hashtable) ParseTreeNode.functionVariableTable.get(functionNameList.get(0));
+        // assign the value to variable, that means we need to have that variable name exist in the table and type of value is match with var type
         if (this.type == StatementType.Assign) {
             super.run(functionNameList);
-            if (curVariableTable.containsKey(this.getVariableName())) {
-                Object curValue = this.getChild(assignExpIndex).getValue();
-                Variable v = (Variable) curVariableTable.get(this.getVariableName());
-                int varType = v.getVarType();
-                this.setVariable(this.getChild(assignExpIndex).getValue(), varType);
-                if (curValue instanceof Integer && varType == sym.INT) {
-                    curVariableTable.put(this.getVariableName(),
+            if (curVariableTable.containsKey(this.getVariableName())) { // if the current table has this variable
+                Object curValue = this.getChild(assignExpIndex).getValue(); // get value that we want to assign by getting from expression node
+                Variable v = (Variable) curVariableTable.get(this.getVariableName()); // get variable object by using variable name as a key
+                int varType = v.getVarType(); // get type of variable
+                this.setVariable(this.getChild(assignExpIndex).getValue(), varType); // set the variable by passing value and type
+                if (curValue instanceof Integer && varType == sym.INT) { // check type of value which we want to assign that match with type of variable
+                    curVariableTable.put(this.getVariableName(), // if match, put variable name and variable object(value, type) into the current table
                             this.getVariable());
                 } else if (curValue instanceof Double && varType == sym.DOUBLE) {
                     curVariableTable.put(this.getVariableName(),
@@ -254,30 +255,30 @@ public class StatementNode extends ParseTreeNode {
                 } else if (curValue instanceof Character && varType == sym.CHARACTER) {
                     curVariableTable.put(this.getVariableName(),
                             this.getVariable());
-                } else {
+                } else { // if not match, show message
                     //System.out.println(varType);
                     System.out.println("value of " + this.getVariableName() + " variable is incompatible for this type");
                     System.exit(0);
                 }
-            } else {
+            } else { // if the current table doesn't have this variable, show message
 
                 System.out.println("variable " + this.getVariableName() + " doesn't exist");
                 System.exit(0);
             }
-        } else if (this.type == StatementType.Declaration) {
+        } else if (this.type == StatementType.Declaration) { // declaration of variable, need type and variable name
             super.run(functionNameList);
-            curVariableTable.put(this.getVariableName(),
+            curVariableTable.put(this.getVariableName(), // put var name and var object(value(should be null), type) into the current table
                     this.getVariable());
             //Variable v = (Variable) ParseTreeNode.varTable.get(this.getVariableName());
             //System.out.println(v.getVarValue());
-        } else if (this.type == StatementType.DeclareAndAssign) {
+        } else if (this.type == StatementType.DeclareAndAssign) { // declare and assign value to var, need to check that type of value is match with var type
             ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
             expression.run(functionNameList);
-            Object curValue = expression.getValue();
+            Object curValue = expression.getValue(); // get value that we want to assign into var by running expression node
 
-            if (curValue instanceof Integer && this.getVariableType() == sym.INT) {
-                this.setVariable(curValue, this.getVariableType());
-                curVariableTable.put(this.getVariableName(),
+            if (curValue instanceof Integer && this.getVariableType() == sym.INT) { // check type of value which we want to assign that match with type of variable
+                this.setVariable(curValue, this.getVariableType()); // set the variable object by passing value and type
+                curVariableTable.put(this.getVariableName(), // if match, put variable name and variable object(value, type) into the current table
                         this.getVariable());
             } else if (curValue instanceof Double && this.getVariableType() == sym.DOUBLE) {
                 this.setVariable(curValue, this.getVariableType());
@@ -291,14 +292,14 @@ public class StatementNode extends ParseTreeNode {
                 this.setVariable(curValue, this.getVariableType());
                 curVariableTable.put(this.getVariableName(),
                         this.getVariable());
-            } else {
+            } else { // if not match, show message
                 //System.out.println(this.getVariableType());
                 System.out.print("value of " + this.getVariableName() + " variable is incompatible for this type");
                 System.exit(0);
             }
         } else if (this.type == StatementType.If
                 || this.type == StatementType.IfElse) {
-            ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
+            ExpressionNode expression = (ExpressionNode) this.getChild(expIndex); // running condition expression
             expression.run(functionNameList);
             Object curValue = expression.getValue();
             boolean isTrue = false;
@@ -309,12 +310,12 @@ public class StatementNode extends ParseTreeNode {
             } else if (curValue instanceof Integer) {
                 isTrue = ((Integer) curValue) != 0;
             }
-            if (isTrue) {
+            if (isTrue) { // condition passed, running statement inside
                 this.getChild(state1Index).run(functionNameList);
             } else if (this.type == StatementType.IfElse) {
                 this.getChild(state2Index).run(functionNameList);
             }
-        } else if (this.type == StatementType.WHILE) {
+        } else if (this.type == StatementType.WHILE) { // same way with if else
             ExpressionNode expression = (ExpressionNode) this.getChild(expIndex);
             expression.run(functionNameList);
             Object curValue = expression.getValue();
@@ -336,50 +337,62 @@ public class StatementNode extends ParseTreeNode {
             expression.run(functionNameList);
             Object curValue = expression.getValue();
             System.out.println(curValue);
-        } else if (this.type == StatementType.Function) {
-            ParseTreeNode.functionVariableTable.put(this.getVariableName(), new Hashtable());
-            ParseTreeNode.functionTable.put(this.getVariableName(), this.nodeList.get(5));
-            ParseTreeNode.functionParamsTable.put(this.getVariableName(), new LinkedList<Variable>());
+            
+        } else if (this.type == StatementType.Function) { // function declaration with parameter require
+            ParseTreeNode.functionVariableTable.put(this.getVariableName(), new Hashtable()); // add function name as a key and value is a new has table
+            ParseTreeNode.functionTable.put(this.getVariableName(), this.nodeList.get(5)); // add function name as a key and value is list of node of statement inside this function
+            ParseTreeNode.functionParamsTable.put(this.getVariableName(), new LinkedList<Variable>()); // add function name as a key and value is list of variable(parameter) for this function
             LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
             newFunctionNameList.push(this.getVariableName());
-            this.getChild(2).run(newFunctionNameList);
-        } else if (this.type == StatementType.FunctionWithOutParam) {
-            ParseTreeNode.functionVariableTable.put(this.getVariableName(), new Hashtable());
-            ParseTreeNode.functionTable.put(this.getVariableName(), this.nodeList.get(4));
-            ParseTreeNode.functionParamsTable.put(this.getVariableName(), new LinkedList<Variable>());
+            this.getChild(2).run(newFunctionNameList); // running param nade by running with function name
+            
+        } else if (this.type == StatementType.FunctionWithOutParam) { // function declaration without any parameter require
+            ParseTreeNode.functionVariableTable.put(this.getVariableName(), new Hashtable()); // add function name as a key and value is a new has table
+            ParseTreeNode.functionTable.put(this.getVariableName(), this.nodeList.get(4)); // add function name as a key and value is list of node of statement inside this function
+            ParseTreeNode.functionParamsTable.put(this.getVariableName(), new LinkedList<Variable>()); // add function name as a key and value is list of variable(parameter) for this function
             LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
             newFunctionNameList.push(this.getVariableName());
-            this.getChild(2).run(newFunctionNameList);
-        } else if (this.type == StatementType.FunctionParam) {
+            this.getChild(2).run(newFunctionNameList); // running param nade by running with function name
+            
+        } else if (this.type == StatementType.FunctionParam) { // declaration of parameter of function
+            // get hashtable of function (create when declare function) and put param name and param variable object(value(should be null), type) into this hashtable
             ((Hashtable) ParseTreeNode.functionVariableTable.get(functionNameList.get(0))).put(this.getVariableName(), new Variable(null, this.getVariableType()));
+            // get list of param variable of function (create when declare function) and add variable(param) object(var name, type) into the list
             ((LinkedList) ParseTreeNode.functionParamsTable.get(functionNameList.get(0))).add(new Variable(this.getVariableName(), this.getVariableType()));
-            if (this.nodeList.size() == 2) {
-                this.getChild(1).run(functionNameList);
+            
+            if (this.nodeList.size() == 2) { // if have more than one param
+                this.getChild(1).run(functionNameList); // get next param and run
             }
-        } else if (this.type == StatementType.FunctionCall) {
-            if (!ParseTreeNode.functionTable.containsKey(this.getVariableName())) {
-                System.out.println("Function " + this.getVariableName() + " not found");
-            } else {
-                if (((LinkedList) ParseTreeNode.functionParamsTable.get(this.getVariableName())).isEmpty()) {
-                    ParseTreeNode functionNode = (ParseTreeNode) ParseTreeNode.functionTable.get(this.getVariableName());
+            
+        } else if (this.type == StatementType.FunctionCall) { // call function without any param inside
+            if (!ParseTreeNode.functionTable.containsKey(this.getVariableName())) { // if can't find the function name in the function table
+                System.out.println("Function " + this.getVariableName() + " not found"); // show message
+                
+            } else { // if found, check list of param variable of this function is empty or not (because we call fuction without any param)
+                if (((LinkedList) ParseTreeNode.functionParamsTable.get(this.getVariableName())).isEmpty()) { // if empty (RIGHT calling)
+                    ParseTreeNode functionNode = (ParseTreeNode) ParseTreeNode.functionTable.get(this.getVariableName()); // get list of statement node inside this function
                     LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
                     newFunctionNameList.push(this.getVariableName());
-                    functionNode.run(newFunctionNameList);
-                } else {
-                    System.out.println("Number of params should be 0");
+                    functionNode.run(newFunctionNameList); // running statement node
+                } else { // if not empty ( it means this fuction require some param )
+                    System.out.println("Number of params shouldn't be 0");
                 }
             }
-        } else if (this.type == StatementType.FunctionCallWithParam) {
-            if (!ParseTreeNode.functionTable.containsKey(this.getVariableName())) {
-                System.out.println("Function " + this.getVariableName() + " not found");
-            } else {
-                this.getChild(0).run(functionNameList);
-                if (this.getChild(0).checkParams(this.getVariableName(), 0)) {
-                    ParseTreeNode functionNode = (ParseTreeNode)  ParseTreeNode.functionTable.get(this.getVariableName());
+            
+        } else if (this.type == StatementType.FunctionCallWithParam) { // call function with param
+            if (!ParseTreeNode.functionTable.containsKey(this.getVariableName())) { // if can't find the function name in the function table
+                System.out.println("Function " + this.getVariableName() + " not found"); // show message
+                
+            } else { // if found
+                this.getChild(0).run(functionNameList); // running expression node (param value)
+                
+                // calling check param function and passing function name and start index
+                if (this.getChild(0).checkParams(this.getVariableName(), 0)) { // if checkParams func return true ( calling with correct parameters )
+                    ParseTreeNode functionNode = (ParseTreeNode)  ParseTreeNode.functionTable.get(this.getVariableName()); // get list of statement node inside this function
                     LinkedList<String> newFunctionNameList = new LinkedList<>(functionNameList);
                     newFunctionNameList.push(this.getVariableName());
-                    functionNode.run(newFunctionNameList);
-                } else {
+                    functionNode.run(newFunctionNameList); // running statement node
+                } else { // if checkParams func return false ( calling with incorrect parameters )
                     System.out.println("Params is not correct");
                 }
             }

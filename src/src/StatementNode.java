@@ -235,6 +235,7 @@ public class StatementNode extends ParseTreeNode {
     @Override
     public void run(LinkedList<String> functionNameList) {
         Hashtable curVariableTable = (Hashtable) ParseTreeNode.functionVariableTable.get(functionNameList.get(0));
+        Hashtable gloVariableTable = (Hashtable) ParseTreeNode.functionVariableTable.get("global");
         // assign the value to variable, that means we need to have that variable name exist in the table and type of value is match with var type
         if (this.type == StatementType.Assign) {
             super.run(functionNameList);
@@ -261,7 +262,30 @@ public class StatementNode extends ParseTreeNode {
                     System.out.println("value of " + this.getVariableName() + " variable is incompatible for this type");
                     System.exit(0);
                 }
-            } else { // if the current table doesn't have this variable, show message
+            } else if(gloVariableTable.containsKey(this.getVariableName())) {
+                Object curValue = this.getChild(assignExpIndex).getValue(); // get value that we want to assign by getting from expression node
+                Variable v = (Variable) gloVariableTable.get(this.getVariableName()); // get variable object by using variable name as a key
+                int varType = v.getVarType(); // get type of variable
+                this.setVariable(this.getChild(assignExpIndex).getValue(), varType); // set the variable by passing value and type
+                if (curValue instanceof Integer && varType == sym.INT) { // check type of value which we want to assign that match with type of variable
+                    gloVariableTable.put(this.getVariableName(), // if match, put variable name and variable object(value, type) into the current table
+                            this.getVariable());
+                } else if (curValue instanceof Double && varType == sym.DOUBLE) {
+                    gloVariableTable.put(this.getVariableName(),
+                            this.getVariable());
+                } else if (curValue instanceof Boolean && varType == sym.BOOLEAN) {
+                    gloVariableTable.put(this.getVariableName(),
+                            this.getVariable());
+                } else if (curValue instanceof Character && varType == sym.CHARACTER) {
+                    gloVariableTable.put(this.getVariableName(),
+                            this.getVariable());
+                } else { // if not match, show message
+                    //System.out.println(curValue);
+                    //System.out.println(varType);
+                    System.out.println("value of " + this.getVariableName() + " variable is incompatible for this type");
+                    System.exit(0);
+                }
+            }else { // if the current table doesn't have this variable, show message
 
                 System.out.println("variable " + this.getVariableName() + " doesn't exist");
                 System.exit(0);

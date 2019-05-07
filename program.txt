@@ -1,9 +1,16 @@
-function f (int x) {
-    int result = 1;
-    while (x > 0) {
-        result = result * x;
-        x = x - 1;
-    }
-    print(result);
+double y=3.33;
+
+function f (double x) {
+    y = 0.0;
+    print(x+y);
 }
-f(3);
+
+function g(int a, char b) {
+    if(a >0){
+        print(a+y);
+    }
+    f(2.0);
+}
+
+f(y);
+g(2, 'm');

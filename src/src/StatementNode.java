@@ -256,6 +256,7 @@ public class StatementNode extends ParseTreeNode {
                     curVariableTable.put(this.getVariableName(),
                             this.getVariable());
                 } else { // if not match, show message
+                    //System.out.println(curValue);
                     //System.out.println(varType);
                     System.out.println("value of " + this.getVariableName() + " variable is incompatible for this type");
                     System.exit(0);
@@ -294,6 +295,8 @@ public class StatementNode extends ParseTreeNode {
                         this.getVariable());
             } else { // if not match, show message
                 //System.out.println(this.getVariableType());
+                //System.out.println(curValue);
+                //System.out.println(this.getVariableType());
                 System.out.print("value of " + this.getVariableName() + " variable is incompatible for this type");
                 System.exit(0);
             }
@@ -328,7 +331,7 @@ public class StatementNode extends ParseTreeNode {
                 isTrue = ((Integer) curValue) != 0;
             }
             if (isTrue) {
-                this.getChild(state1Index).run();
+                this.getChild(state1Index).run(functionNameList);
                 this.run(functionNameList);
             }
 

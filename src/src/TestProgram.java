@@ -15,9 +15,9 @@ import java_cup.runtime.Symbol;
  */
 public class TestProgram {
     public static void main(String[] args) throws Exception {
-        //String input = "print(3 != 2);\n";
+        String input = "int y=4;\nfunction f(int x){\n\nwhile(x>0){\nprint(x);\nx=x- 1;\n}}\nf(y+1);\n";
 
-        String input = "int x=5;function f(int x, int y, bool z) {\nif(z){ int a=x+y;\nprint(a);}\n}\nfunction g() {print(a);}\nf(x, 4, true);\nprint(a);\ng();\n";
+        //String input = "int x=5;function f(int x, int y, bool z, char b, int c) {\nif(z){ int a=x+y-c;\nprint(a);}\nprint(b);\n}\nfunction g() {print(a);}\nf(x, 4, true, 's', 2);\nprint(a);\ng();\n";
         //String input = "bool x=true;\nif (x){int a=5;\nprint(a);\n}\nprint(a);";
         //String input = "bool x;\n x=true;\nbool y=true;\nif(x AND y){\nprint(x);\n}\n";
         //String input = "int x=1;\nint y=3;\nif(y){\nprint(y);\nif(x){\nprint(x);\n}\n}";

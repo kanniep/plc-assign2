@@ -52,7 +52,10 @@ public class ExpressionNode extends ParseTreeNode {
     public void minus() {
         Number value1 = (Number) this.nodeList.get(0).getValue();
         Number value2 = (Number) this.nodeList.get(2).getValue();
+       // System.out.println(value1);
+       // System.out.println(value2);
         double dResult = value1.doubleValue() - value2.doubleValue();
+       // System.out.println(dResult);
         this.assignNumberValue(dResult, hasDouble(value1, value2));
     }
     

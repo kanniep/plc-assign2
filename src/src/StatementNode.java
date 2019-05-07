@@ -328,7 +328,7 @@ public class StatementNode extends ParseTreeNode {
                 isTrue = ((Integer) curValue) != 0;
             }
             if (isTrue) {
-                this.getChild(state1Index).run();
+                this.getChild(state1Index).run(functionNameList);
                 this.run(functionNameList);
             }
 

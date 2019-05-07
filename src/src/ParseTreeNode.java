@@ -151,7 +151,8 @@ public abstract class ParseTreeNode {
             curVar.VarType == sym.BOOLEAN && childValue instanceof Boolean||
             curVar.VarType == sym.CHARACTER && childValue instanceof Character  ) { 
             // get hashtable of this function                                   put param name as a key and value is param value
-            ((Hashtable) ParseTreeNode.functionVariableTable.get(functionName)).put(curVar.name, childValue);
+            curVar.setVarValue(childValue);
+            ((Hashtable) ParseTreeNode.functionVariableTable.get(functionName)).put(curVar.name, curVar);
             curResult = true;
         } else {
             curResult = false;

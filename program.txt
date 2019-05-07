@@ -1,0 +1,9 @@
+function f (int x) {
+    int result = 1;
+    while (x > 0) {
+        result = result * x;
+        x = x - 1;
+    }
+    print(result);
+}
+f(3);
